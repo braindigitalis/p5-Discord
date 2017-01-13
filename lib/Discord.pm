@@ -8,6 +8,7 @@ use JSON::XS qw(decode_json encode_json);
 use Data::Dumper;
 our $VERSION = '0.001';
 
+with 'Discord::Role::WebSocket';
 
 has 'url' => (
     is      => 'ro',
@@ -96,14 +97,18 @@ Version 0.001
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use Discord;
-
-    my $foo = Discord->new();
-    ...
+  use 5.010;
+  use Discord;
+  
+  my $discord = Discord->new(
+      client_id => '259521088327909380',
+      client_secret => 'Z9FFr8u4gBwxnFw-RDjeqSAngAq2CglT',
+      token => 'MjU5NTIxMDg4MzI3OTA5Mzgw.C1j_4w.u63P40UIx90TguO3935mVSya13Y',
+      bot => 1,
+  );
+  
+  say "Gateway URL: " . $discord->gateway_url();
+  say "Shards: " . $discord->shards;
 
 =cut
 
@@ -113,45 +118,12 @@ Brad Haywood, C<< <brad at geeksware.com> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-discord at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Discord>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Discord
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker (report bugs here)
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Discord>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Discord>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Discord>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Discord/>
-
-=back
-
+There will be plenty.
 
 =head1 ACKNOWLEDGEMENTS
 
+- Me
+- Coffee
 
 =head1 LICENSE AND COPYRIGHT
 
