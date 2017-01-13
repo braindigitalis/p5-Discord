@@ -26,20 +26,14 @@ has 'shards'        => ( is => 'rw', default => sub { 0 } );
 has 'bot'           => ( is => 'rw', default => sub { 0 } );
 has 'token'         => ( is => 'rw' );
 has 'gateway_url'   => ( is => 'rw' );
+has 'header'        => ( is => 'rw' );
 
 sub BUILD {
     my ($self, $args) = @_;
 
-    my $gwurl = ($self->{bot}) ?
-        $self->url . '/gateway/bot' : $self->url . '/gateway';
+    $self->set_header();
 
-    my $h = HTTP::Headers->new;
-    if ($args->{bot} and $args->{token}) { 
-        $h->header('Authorization' => 'Bot ' . $self->token);
-    }
-
-    my $req = HTTP::Request->new('GET', $gwurl, $h); 
-    my $res = decode_json($self->ua->request($req)->content);
+    my $res = $self->request();
     if ($res and $res->{url}) {
         $self->gateway_url($res->{url});
         if ($res->{shards}) {
@@ -49,6 +43,37 @@ sub BUILD {
     else {
         die "Failed to retrieve gateway URL: $res->{message}\n";
     }
+}
+
+sub request {
+    my ($self, $content) = @_;
+    
+    my $req = HTTP::Request->new(
+        'GET',
+        $self->api_url,
+        $self->header,
+    );
+
+    my $res = decode_json($self->ua->request($req)->content);
+
+    return $res;
+}
+
+sub api_url {
+    my ($self) = @_;
+    return ($self->bot) ?
+        $self->url . '/gateway/bot' : '/gateway';
+}
+
+sub set_header {
+    my ($self) = @_;
+    my $h = HTTP::Headers->new;
+    if ($self->bot and $self->token) {
+        $h->header('Authorization' => 'Bot ' . $self->token);
+    }
+    
+    $self->header($h);
+    return $self;
 }
 
 sub _build_ua {
