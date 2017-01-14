@@ -21,16 +21,21 @@ has 'ua' => (
     builder => '_build_ua'
 );
 
-has 'client_id'     => ( is => 'rw', required => 1 );
-has 'client_secret' => ( is => 'rw', required => 1 );
+has 'client_id'     => ( is => 'rw' );
+has 'client_secret' => ( is => 'rw' );
+has 'api_version'   => ( is => 'rw', default => sub { 6 } );
+has 'encoding'      => ( is => 'rw', default => sub { 'json' } );
 has 'shards'        => ( is => 'rw', default => sub { 0 } );
 has 'bot'           => ( is => 'rw', default => sub { 0 } );
 has 'token'         => ( is => 'rw' );
 has 'gateway_url'   => ( is => 'rw' );
 has 'header'        => ( is => 'rw' );
+has 'base_name'     => ( is => 'rw' );
 
 sub BUILD {
     my ($self, $args) = @_;
+    my $caller = caller 1;
+    $self->base_name($caller);
 
     $self->set_header();
 
@@ -48,7 +53,7 @@ sub BUILD {
 
 sub request {
     my ($self, $content) = @_;
-    
+
     my $req = HTTP::Request->new(
         'GET',
         $self->api_url,
@@ -74,6 +79,12 @@ sub set_header {
     }
     
     $self->header($h);
+    return $self;
+}
+
+sub connect {
+    my ($self) = @_;
+    $self->init_socket();
     return $self;
 }
 

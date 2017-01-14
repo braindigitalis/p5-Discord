@@ -16,6 +16,9 @@ WriteMakefile(
     },
     BUILD_REQUIRES => {
         'Test::More' => 0,
+        'MooX::Types::MooseLike::Base' => 0,
+        'JSON::XS' => 0,
+        'Moo' => 0,
     },
     PREREQ_PM => {
         #'ABC'              => 1.6,
