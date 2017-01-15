@@ -14,7 +14,7 @@ sub init_socket {
 	my ($self) = @_;
 	my $base = $self->base_name;
 	my $url = $self->gateway_url .
-      '?v=' . $self->api_version . '&encoding=' . $self->encoding;
+        '?v=' . $self->api_version . '&encoding=' . $self->encoding;
 
 	POE::Session->create(
 	    inline_states => {
@@ -26,7 +26,7 @@ sub init_socket {
 	            $_[HEAP]->{ws} = $ws;
 	            $self->sender($_[SENDER]);
 	            $self->kernel($_[KERNEL]);
-				$self->heap($ws);
+                $self->heap($ws);
 
 	            $_[KERNEL]->yield("next")
 	        },
@@ -73,7 +73,7 @@ sub identify {
 	$self->_send({
 		op => Discord::OPCodes::IDENTIFY,
 		d  => {
-		"token" => $self->token,
+		    "token" => $self->token,
 		    "properties" => {
 		        '$os'				=> "linux",
 		        '$browser'			=> "p5-Discord",
