@@ -13,14 +13,18 @@ use 5.010;
 use Discord;
 
 my $discord = Discord->new(
-    client_id => 'SOME_ID',
-    client_secret => 'YOUR_SECRET',
     token => 'TOKEN_FOR_BOT',
-    bot => 1,
-);
+)->connect;
 
-say "Gateway URL: " . $discord->gateway_url();
-say "Shards: " . $discord->shards;
+sub discord_init {
+    my ($self, $discobj, $res) = @_;
+    say "Connected!";
+}
+
+sub discord_read {
+    my ($self, $discobj, $message) = @_;
+    say "Message -> $message";
+}
 ```
 
 # AUTHOR

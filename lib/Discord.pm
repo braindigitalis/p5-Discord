@@ -37,6 +37,12 @@ sub BUILD {
     my $caller = caller 1;
     $self->base_name($caller);
 
+    # if client_id and client_secret are missing
+    # then we must be a bot
+    if (not $args->{client_id} and not $args->{client_secret}) {
+        $self->bot(1);
+    }
+
     $self->set_header();
 
     my $res = $self->request();
@@ -112,14 +118,18 @@ Version 0.001
   use Discord;
   
   my $discord = Discord->new(
-      client_id => 'SOME_ID',
-      client_secret => 'YOUR_SECRET',
       token => 'TOKEN_FOR_BOT',
-      bot => 1,
-  );
+  )->connect;
   
-  say "Gateway URL: " . $discord->gateway_url();
-  say "Shards: " . $discord->shards;
+  sub discord_init {
+      my ($self, $discobj, $res) = @_;
+      say "Connected!";
+  }
+  
+  sub discord_read {
+      my ($self, $discobj, $message) = @_;
+      say "Message -> $message";
+  }
 
 =cut
 
