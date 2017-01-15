@@ -19,7 +19,7 @@ sub on_hello {
 	$self->heartbeat->{loop} = Mojo::IOLoop->recurring($self->heartbeat->{interval},
         sub {
             $self->heartbeat->{'check'}++;
-            $self->_send($self, {
+            $self->_send({
             	op => Discord::OPCodes::HEARTBEAT,
             	d  => $self->seq,
             });
