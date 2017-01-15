@@ -18,8 +18,6 @@ sub on_hello {
 	$self->heartbeat->{interval} = $data->{d}->{heartbeat_interval};
 	$self->heartbeat->{loop} = Mojo::IOLoop->recurring($self->heartbeat->{interval},
         sub {
-            my $op = 1;
-            my $d = $self->{'s'};
             $self->heartbeat->{'check'}++;
             $self->_send($self, {
             	op => Discord::OPCodes::HEARTBEAT,
@@ -38,6 +36,13 @@ sub on_receive {
 
 sub on_cleanup {
 	my ($self) = @_;
+	Mojo::IOLoop->remove($self->heartbeat->{loop});
+}
+
+sub on_heartbeat_ack {
+	my ($self, $data) = @_;
+	$self->heartbeat->{check}--;
+	say "Recieved heartbeat ack";
 }
 
 1;

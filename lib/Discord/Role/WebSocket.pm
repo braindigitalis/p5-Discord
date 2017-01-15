@@ -48,8 +48,9 @@ sub init_socket {
                 
                 $self->on_receive($message);
 
-                if ($message->{op} == Discord::OPCodes::HELLO) {
-                	$self->on_hello($message);
+                for ($message->{op}) {
+                	if ($_ == Discord::OPCodes::HELLO) { $self->on_hello($message); }
+                	if ($_ == Discord::OPCodes::HEARTBEAT_ACK) { $self->on_heartbeat_ack($message); }
                 }
 
                 if ($base->can('discord_read')) {
@@ -74,7 +75,7 @@ sub identify {
 		d  => {
 		    "token" => $self->token,
 		    "properties" => {
-		        '$os'				=> "linux",
+		        '$os'				=> $^O,
 		        '$browser'			=> "p5-Discord",
 		        '$device'			=> "p5-Discord",
 		        '$referrer'			=> "",
