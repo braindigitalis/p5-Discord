@@ -63,7 +63,7 @@ sub init_socket {
 
 sub _send {
 	my ($self, $payload) = @_;
-	my $enc_pay = compress(encode_json($payload));
+	my $enc_pay = encode_json($payload);
 	$self->kernel->post($self->sender->ID, 'send', $enc_pay);
 	$self->heap->send($enc_pay);
 }
