@@ -19,6 +19,9 @@ WriteMakefile(
         'MooX::Types::MooseLike::Base' => 0,
         'JSON::XS' => 0,
         'Moo' => 0,
+        'Mojo::UserAgent' => 0,
+        'Mojo::IOLoop' => 0,
+        'Compress:Zlib' => 0,
     },
     PREREQ_PM => {
         #'ABC'              => 1.6,

@@ -1,14 +1,16 @@
 package Discord::Role::WebSocket;
 
+use 5.010;
 use Moo::Role;
 use Discord::OPCodes;
 use JSON::XS qw(encode_json decode_json);
-use POE qw(Component::Client::WebSocket);
 use Compress::Zlib;
+use Mojo::UserAgent;
 
-has 'heap' => ( is => 'rw' );
-has 'sender' => ( is => 'rw' );
-has 'kernel' => ( is => 'rw' );
+with 'Discord::Role::WebSocket::Events';
+
+has 'seq'	 => ( is => 'rw' );
+has 'tx' 	 => ( is => 'rw' );
 
 sub init_socket {
 	my ($self) = @_;
@@ -16,56 +18,53 @@ sub init_socket {
 	my $url = $self->gateway_url .
         '?v=' . $self->api_version . '&encoding=' . $self->encoding;
 
-	POE::Session->create(
-	    inline_states => {
-	        _start => sub {
-	            my $ws = POE::Component::Client::WebSocket->new($url);
-	            $ws->handler('connected','connected');
-	            $ws->connect;
-	 
-	            $_[HEAP]->{ws} = $ws;
-	            $self->sender($_[SENDER]);
-	            $self->kernel($_[KERNEL]);
-                $self->heap($ws);
+    my $ua = Mojo::UserAgent->new;
 
-	            $_[KERNEL]->yield("next")
-	        },
-	        next   => sub {
-	            $_[KERNEL]->delay(next => 1);
-	        },
-	        websocket_read => sub {
-	            my ($kernel,$read) = @_[KERNEL,ARG0];
-	            if ($base->can('discord_read')) {
-	            	$base->discord_read($self, $read);
-	            }
-	       },
-	       websocket_disconnected => sub {
-	            if ($base->can('discord_close')) {
-	            	$base->discord_close($self);
-	            }
-	       },
-	       connected => sub {
-	            my $req = $_[ARG0];
-	            if ($base->can('discord_init')) {
-	            	$base->discord_init($self, $req);
-	            }
-	       },
-	       websocket_handshake => sub {
-	            my $res = $_[ARG0];
-	 
-	          	$self->identify;
-	       },
-	    },
-	);
-	 
-	POE::Kernel->run();
+    $ua->transactor->name('p5-Discord');
+	$ua->websocket($url => sub {
+            my ($ua, $tx) = @_;
+    
+            unless ($tx->is_websocket)
+            {
+            	$self->on_cleanup;
+                $self->tx(undef);
+                return;
+            }
+    
+            $self->tx($tx);
+    		$self->identify;
+    
+            $tx->on(finish => sub {
+                my ($tx, $code, $reason) = @_;
+                if ($base->can('discord_close')) {
+                	$base->discord_close($self, $tx, $code, $reason);
+                }
+            }); 
+    
+            # main loop
+            $tx->on(message => sub {
+                my ($tx, $json) = @_;
+                my $message = decode_json($json);
+                
+                $self->on_receive($message);
+
+                if ($message->{op} == Discord::OPCodes::HELLO) {
+                	$self->on_hello($message);
+                }
+
+                if ($base->can('discord_read')) {
+                	$base->discord_read($self, $message);
+                }
+            });        
+        });
+
+		Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 }
 
 sub _send {
 	my ($self, $payload) = @_;
 	my $enc_pay = encode_json($payload);
-	$self->kernel->post($self->sender->ID, 'send', $enc_pay);
-	$self->heap->send($enc_pay);
+	$self->tx->send($enc_pay);
 }
 
 sub identify {

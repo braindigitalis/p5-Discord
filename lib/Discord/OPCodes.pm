@@ -7,6 +7,7 @@ use constant {
 	RESUME		=> 6,
 	RECONNECT 	=> 7,
 	GUILD_REQUEST => 8,
+	HELLO		=> 10,
 };
 
 1;
