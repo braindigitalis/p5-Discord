@@ -6,6 +6,7 @@ use Discord::OPCodes;
 use JSON::XS qw(encode_json decode_json);
 use Compress::Zlib;
 use Mojo::UserAgent;
+use Data::Dumper;
 
 with 'Discord::Role::WebSocket::Events';
 
@@ -44,16 +45,16 @@ sub init_socket {
         $tx->on(message => sub {
             my ($tx, $json) = @_;
             my $message = decode_json($json);
-            
+
             $self->on_receive($message);
+
+            if ($base->can('discord_read')) {
+            	$base->discord_read($self, $message);
+            }
 
             for ($message->{op}) {
             	if ($_ == Discord::OPCodes::HELLO) { $self->on_hello($message); }
             	if ($_ == Discord::OPCodes::HEARTBEAT_ACK) { $self->on_heartbeat_ack($message); }
-            }
-
-            if ($base->can('discord_read')) {
-            	$base->discord_read($self, $message);
             }
         });        
     });
@@ -61,14 +62,29 @@ sub init_socket {
 	Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 }
 
+sub send_heartbeat {
+	my ($self) = @_;
+	$self->heartbeat->{'check'}++;
+	$self->_send({
+    	op => Discord::OPCodes::HEARTBEAT,
+    	d  => $self->seq,
+    });
+
+    say "<- Sent heartbeat" if $ENV{DISCORD_DEBUG};
+}
+
 sub _send {
 	my ($self, $payload) = @_;
+	#say "<- Sending payload"
+	#	. Dumper($payload) if $ENV{DISCORD_DEBUG};
+
 	my $enc_pay = encode_json($payload);
 	$self->tx->send($enc_pay);
 }
 
 sub identify {
 	my ($self) = @_;
+	say "<- Sent ident" if $ENV{DISCORD_DEBUG};
 	$self->_send({
 		op => Discord::OPCodes::IDENTIFY,
 		d  => {
@@ -82,7 +98,6 @@ sub identify {
 		    },
 		    "compress" => 1,
 		    "large_threshold" => 250,
-		    "shard" => [$self->shards]
 		},
 	});
 }

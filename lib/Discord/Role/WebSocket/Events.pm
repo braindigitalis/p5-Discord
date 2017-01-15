@@ -16,14 +16,9 @@ has 'heartbeat' => ( is => 'rw', default => sub {
 sub on_hello {
 	my ($self, $data) = @_;
 	$self->heartbeat->{interval} = $data->{d}->{heartbeat_interval};
+	$self->send_heartbeat;
 	$self->heartbeat->{loop} = Mojo::IOLoop->recurring($self->heartbeat->{interval},
-        sub {
-            $self->heartbeat->{'check'}++;
-            $self->_send({
-            	op => Discord::OPCodes::HEARTBEAT,
-            	d  => $self->seq,
-            });
-        }
+        sub { $self->send_heartbeat; },
     );
 }
 
@@ -43,7 +38,7 @@ sub on_cleanup {
 sub on_heartbeat_ack {
 	my ($self, $data) = @_;
 	$self->heartbeat->{check}--;
-	say "Recieved heartbeat ack";
+	say "-> Recieved heartbeat ack" if $ENV{DISCORD_DEBUG};;
 }
 
 1;

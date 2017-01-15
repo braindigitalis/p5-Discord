@@ -125,7 +125,7 @@ Version 0.001
       my ($self, $discobj, $res) = @_;
       say "Connected!";
   }
-  
+
   sub discord_read {
       my ($self, $discobj, $message) = @_;
       say "Message -> $message";
