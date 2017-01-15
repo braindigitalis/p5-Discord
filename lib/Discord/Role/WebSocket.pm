@@ -26,7 +26,7 @@ sub init_socket {
 	            $_[HEAP]->{ws} = $ws;
 	            $self->sender($_[SENDER]);
 	            $self->kernel($_[KERNEL]);
-	 			$self->heap($ws);
+				$self->heap($ws);
 
 	            $_[KERNEL]->yield("next")
 	        },
@@ -73,7 +73,7 @@ sub identify {
 	$self->_send({
 		op => Discord::OPCodes::IDENTIFY,
 		d  => {
-			"token" => $self->token,
+		"token" => $self->token,
 		    "properties" => {
 		        '$os'				=> "linux",
 		        '$browser'			=> "p5-Discord",
