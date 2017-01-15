@@ -22,43 +22,43 @@ sub init_socket {
 
     $ua->transactor->name('p5-Discord');
 	$ua->websocket($url => sub {
-            my ($ua, $tx) = @_;
-    
-            unless ($tx->is_websocket)
-            {
-            	$self->on_cleanup;
-                return;
+        my ($ua, $tx) = @_;
+
+        unless ($tx->is_websocket)
+        {
+        	$self->on_cleanup;
+            return;
+        }
+
+        $self->tx($tx);
+		$self->identify;
+
+        $tx->on(finish => sub {
+            my ($tx, $code, $reason) = @_;
+            if ($base->can('discord_close')) {
+            	$base->discord_close($self, $tx, $code, $reason);
             }
-    
-            $self->tx($tx);
-    		$self->identify;
-    
-            $tx->on(finish => sub {
-                my ($tx, $code, $reason) = @_;
-                if ($base->can('discord_close')) {
-                	$base->discord_close($self, $tx, $code, $reason);
-                }
-            }); 
-    
-            # main loop
-            $tx->on(message => sub {
-                my ($tx, $json) = @_;
-                my $message = decode_json($json);
-                
-                $self->on_receive($message);
+        }); 
 
-                for ($message->{op}) {
-                	if ($_ == Discord::OPCodes::HELLO) { $self->on_hello($message); }
-                	if ($_ == Discord::OPCodes::HEARTBEAT_ACK) { $self->on_heartbeat_ack($message); }
-                }
+        # main loop
+        $tx->on(message => sub {
+            my ($tx, $json) = @_;
+            my $message = decode_json($json);
+            
+            $self->on_receive($message);
 
-                if ($base->can('discord_read')) {
-                	$base->discord_read($self, $message);
-                }
-            });        
-        });
+            for ($message->{op}) {
+            	if ($_ == Discord::OPCodes::HELLO) { $self->on_hello($message); }
+            	if ($_ == Discord::OPCodes::HEARTBEAT_ACK) { $self->on_heartbeat_ack($message); }
+            }
 
-		Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
+            if ($base->can('discord_read')) {
+            	$base->discord_read($self, $message);
+            }
+        });        
+    });
+
+	Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 }
 
 sub _send {
