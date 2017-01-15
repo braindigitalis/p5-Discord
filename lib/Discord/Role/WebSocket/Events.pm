@@ -36,6 +36,7 @@ sub on_receive {
 
 sub on_cleanup {
 	my ($self) = @_;
+	$self->tx(undef);
 	Mojo::IOLoop->remove($self->heartbeat->{loop});
 }
 

@@ -27,7 +27,6 @@ sub init_socket {
             unless ($tx->is_websocket)
             {
             	$self->on_cleanup;
-                $self->tx(undef);
                 return;
             }
     
