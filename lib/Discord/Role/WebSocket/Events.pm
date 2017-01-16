@@ -50,6 +50,27 @@ sub on_heartbeat_ack {
 	say "-> Recieved heartbeat ack" if $ENV{DISCORD_DEBUG};;
 }
 
+sub on_ready {
+    my ($self, $message) = @_;
+    # we're modifying the package structure
+    # so we need to do this in a no strict refs block
+    {
+        no strict 'refs';
+        # loop through the data and save anything without
+        # an underscore in the beginning
+        for my $k (keys %{$message->{d}}) {
+            *{"Discord::Role::WebSocket::Session::${k}"} = sub {
+                return $message->{d}->{$k};
+            };
+        }
+    }
+    
+    my $base = $self->base_name;
+    if ($base->can('discord_ready')) {
+        $base->discord_ready($self, $message->{d});
+    }
+}
+
 sub handle_events {
     my ($self, $message) = @_;
     # perl style switch/case to pass the events around
@@ -57,6 +78,15 @@ sub handle_events {
     for ($message->{op}) {
         if ($_ == Discord::OPCodes::HELLO) { $self->on_hello($message); }
         if ($_ == Discord::OPCodes::HEARTBEAT_ACK) { $self->on_heartbeat_ack($message); }
+        if ($_ == Discord::OPCodes::DISPATCH) { $self->handle_dispatch($message); }
+    }
+}
+
+sub handle_dispatch {
+    my ($self, $message) = @_;
+    my $type = $message->{t};
+    for ($type) {
+        if ($_ eq 'READY') { $self->on_ready($message); }
     }
 }
 

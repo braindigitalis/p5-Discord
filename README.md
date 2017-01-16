@@ -21,9 +21,14 @@ sub discord_init {
     say "Connected!";
 }
 
-sub discord_read {
-    my ($self, $discobj, $message) = @_;
-    say "Message -> $message";
+sub discord_message {
+    my ($self, $discobj, $msg) = @_;
+    say "Message -> $msg";
+}
+
+sub discord_ready {
+    my ($self, $disc, $msg) = @_;
+    say $disc->session->user->{username} . " is ready to rock and roll!";
 }
 ```
 

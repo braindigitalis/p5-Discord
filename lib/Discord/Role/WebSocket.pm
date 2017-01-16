@@ -3,6 +3,7 @@ package Discord::Role::WebSocket;
 use 5.010;
 use Moo::Role;
 use Discord::OPCodes;
+use Discord::Role::WebSocket::Session;
 use JSON::XS qw(encode_json decode_json);
 use Compress::Zlib;
 use Mojo::UserAgent;
@@ -12,6 +13,7 @@ with 'Discord::Role::WebSocket::Events';
 
 has 'seq'	 => ( is => 'rw' );
 has 'tx' 	 => ( is => 'rw' );
+has 'session' => ( is => 'ro', default => sub { Discord::Role::WebSocket::Session->new } );
 
 sub init_socket {
 	my ($self) = @_;
@@ -58,8 +60,8 @@ sub init_socket {
             
             # if the user has a discord_read method, then pass
             # the discord object and decoded message to them
-            if ($base->can('discord_read')) {
-                $base->discord_read($self, $message);
+            if ($base->can('discord_message')) {
+                $base->discord_message($self, $message->{d});
             }
             
             # handle all the events from discord
