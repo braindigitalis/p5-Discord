@@ -1,5 +1,9 @@
 package Discord::OPCodes;
 
+# this package just allows us to use human readable names
+# when referencing op codes
+# eg: Discord::OPCodes::IDENTIFY instead of having remember it's '2'
+
 use constant {
 	DISPATCH		=> 0,
 	HEARTBEAT 		=> 1,

@@ -34,6 +34,8 @@ has 'base_name'     => ( is => 'rw' );
 
 sub BUILD {
     my ($self, $args) = @_;
+    # save the base name (package calling this library)
+    # so we know where to fire off the event methods to
     my $caller = caller 1;
     $self->base_name($caller);
 
@@ -43,8 +45,10 @@ sub BUILD {
         $self->bot(1);
     }
 
+    # send the header with our authorization
     $self->set_header();
 
+    # get the gateway url
     my $res = $self->request();
     if ($res and $res->{url}) {
         $self->gateway_url($res->{url});
@@ -90,6 +94,7 @@ sub set_header {
 
 sub connect {
     my ($self) = @_;
+    # initialize the websocket
     $self->init_socket();
     return $self;
 }
