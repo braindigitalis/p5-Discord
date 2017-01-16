@@ -3,6 +3,7 @@ package Discord::Client::WebSocket::Events;
 use 5.010;
 use Moo::Role;
 use Mojo::IOLoop;
+use Discord::Helper;
 use Discord::OPCodes;
 use Data::Dumper;
 
@@ -14,8 +15,7 @@ has 'heartbeat' => ( is => 'rw', default => sub {
 	}
 } );
 
-sub on_hello {
-	my ($self, $data) = @_;
+method on_hello ($data) {
 	# sets the heartbeat interval retrieved from the hello packet
 	$self->heartbeat->{interval} = $data->{d}->{heartbeat_interval};
 	
@@ -28,8 +28,7 @@ sub on_hello {
     );
 }
 
-sub on_receive {
-	my ($self, $data) = @_;
+method on_receive ($data) {
     say Dumper($data) if $ENV{DISCORD_DEBUG};    
 	# if we receive a sequence value, save it
 	if ($data->{s}) {
@@ -37,8 +36,7 @@ sub on_receive {
 	}
 }
 
-sub on_cleanup {
-	my ($self) = @_;
+method on_cleanup {
 	# undefine the transaction attribute
 	$self->tx(undef);
 	
@@ -46,14 +44,12 @@ sub on_cleanup {
 	Mojo::IOLoop->remove($self->heartbeat->{loop});
 }
 
-sub on_heartbeat_ack {
-	my ($self, $data) = @_;
+method on_heartbeat_ack ($data) {
 	$self->heartbeat->{check}--;
 	say "-> Recieved heartbeat ack" if $ENV{DISCORD_DEBUG};;
 }
 
-sub on_ready {
-    my ($self, $message) = @_;
+method on_ready ($message) {
     # the following part is just to make pulling out our user
     # information for the developer cleaner using chained methods
     # instead of gross hashes (ie: $discob->session->user->username)
@@ -88,8 +84,7 @@ sub on_ready {
     }
 }
 
-sub handle_events {
-    my ($self, $message) = @_;
+method handle_events ($message) {
     # perl style switch/case to pass the events around
     # to their respective methods based on the op code from the server
     for ($message->{op}) {
@@ -99,8 +94,7 @@ sub handle_events {
     }
 }
 
-sub handle_dispatch {
-    my ($self, $message) = @_;
+method handle_dispatch ($message) {
     my $type = $message->{t};
     
     # if we have a channel_id, pass it to the Guild role to manage

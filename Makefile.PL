@@ -24,6 +24,7 @@ WriteMakefile(
         'Compress:Zlib' => 0,
         'LWP::UserAgent' => 0,
         'LWP::Protocol::https' => 0,
+        'Method::Signatures::Simple' => 0,
     },
     PREREQ_PM => {
         #'ABC'              => 1.6,

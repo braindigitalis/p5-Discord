@@ -3,6 +3,7 @@ package Discord::Client::WebSocket;
 use 5.010;
 use Moo::Role;
 use Discord::OPCodes;
+use Discord::Helper;
 use Discord::Client::WebSocket::Session;
 use Discord::Client::WebSocket::Session::User;
 use JSON::XS qw(encode_json decode_json);
@@ -16,8 +17,7 @@ has 'seq'	 => ( is => 'rw' );
 has 'tx' 	 => ( is => 'rw' );
 has 'session' => ( is => 'ro', default => sub { Discord::Client::WebSocket::Session->new } );
 
-sub init_socket {
-	my ($self) = @_;
+method init_socket {
 	# store the base name of the package using our library
 	my $base = $self->base_name;
 	
@@ -73,8 +73,7 @@ sub init_socket {
 	Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 }
 
-sub send_heartbeat {
-	my ($self) = @_;
+method send_heartbeat {
 	$self->heartbeat->{'check'}++;
 	$self->_send({
     	op => Discord::OPCodes::HEARTBEAT,
@@ -84,16 +83,14 @@ sub send_heartbeat {
     say "<- Sent heartbeat" if $ENV{DISCORD_DEBUG};
 }
 
-sub _send {
-	my ($self, $payload) = @_;
+method _send ($payload) {
 	# convert the payload from a perl HASH to json string
 	# then send it to the server
 	my $enc_pay = encode_json($payload);
 	$self->tx->send($enc_pay);
 }
 
-sub identify {
-	my ($self) = @_;
+method identify {
 	say "<- Sent ident" if $ENV{DISCORD_DEBUG};
 	$self->_send({
 		op => Discord::OPCodes::IDENTIFY,

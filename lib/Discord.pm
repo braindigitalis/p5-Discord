@@ -6,6 +6,7 @@ use LWP::UserAgent;
 use MooX::Types::MooseLike::Base qw(InstanceOf);
 use JSON::XS qw(decode_json encode_json);
 use Data::Dumper;
+use Discord::Helper;
 use Discord::Client::Shards::Guild;
 our $VERSION = '0.001';
 
@@ -34,8 +35,7 @@ has 'header'        => ( is => 'rw' );
 has 'base_name'     => ( is => 'rw' );
 has 'guild'         => ( is => 'ro', default => sub { Discord::Client::Shards::Guild->new } );
 
-sub BUILD {
-    my ($self, $args) = @_;
+func BUILD ($self, $args) {
     # save the base name (package calling this library)
     # so we know where to fire off the event methods to
     my $caller = caller 1;
@@ -63,9 +63,7 @@ sub BUILD {
     }
 }
 
-sub request {
-    my ($self, $content) = @_;
-
+method request ($content) {
     my $req = HTTP::Request->new(
         'GET',
         $self->api_url,
@@ -77,14 +75,12 @@ sub request {
     return $res;
 }
 
-sub api_url {
-    my ($self) = @_;
+method api_url {
     return ($self->bot) ?
         $self->url . '/gateway/bot' : '/gateway';
 }
 
-sub set_header {
-    my ($self) = @_;
+method set_header {
     my $h = HTTP::Headers->new;
     if ($self->bot and $self->token) {
         $h->header('Authorization' => 'Bot ' . $self->token);
@@ -94,16 +90,13 @@ sub set_header {
     return $self;
 }
 
-sub connect {
-    my ($self) = @_;
+method connect {
     # initialize the websocket
     $self->init_socket();
     return $self;
 }
 
-sub _build_ua {
-    my $self = shift;
-
+method _build_ua {
     my $lwp = LWP::UserAgent->new;
     $lwp->agent("p5-Discord/${VERSION}");
     return $lwp;
