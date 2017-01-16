@@ -127,13 +127,18 @@ Version 0.001
   )->connect;
   
   sub discord_init {
-      my ($self, $discobj, $res) = @_;
+      my ($self, $disc, $res) = @_;
       say "Connected!";
   }
 
   sub discord_ready {
       my ($self, $disc, $msg) = @_;
       say $disc->session->user->username . " is ready to rock and roll!";
+  }
+
+  sub discord_message {
+      my ($self, $disc, $msg) = @_;
+      say "Someone said: " . $msg->{content};
   }
 
 =cut

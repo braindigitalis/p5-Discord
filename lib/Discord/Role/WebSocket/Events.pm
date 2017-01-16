@@ -6,6 +6,8 @@ use Mojo::IOLoop;
 use Discord::OPCodes;
 use Data::Dumper;
 
+with 'Discord::Role::WebSocket::Events::Guild';
+
 has 'heartbeat' => ( is => 'rw', default => sub {
 	{
 		check	 => 0,
@@ -102,6 +104,12 @@ sub handle_events {
 sub handle_dispatch {
     my ($self, $message) = @_;
     my $type = $message->{t};
+    
+    # if we have a channel_id, pass it to the Guild role to manage
+    if (exists $message->{d}->{channel_id}) {
+        $self->handle_guild_events($type, $message->{d});
+    }
+
     for ($type) {
         if ($_ eq 'READY') { $self->on_ready($message); }
     }
