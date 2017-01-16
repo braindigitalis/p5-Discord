@@ -25,6 +25,7 @@ WriteMakefile(
         'LWP::UserAgent' => 0,
         'LWP::Protocol::https' => 0,
         'Method::Signatures::Simple' => 0,
+        'Import::Into' => 0,
     },
     PREREQ_PM => {
         #'ABC'              => 1.6,
