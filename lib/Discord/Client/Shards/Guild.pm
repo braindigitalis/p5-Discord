@@ -17,10 +17,10 @@ sub handle_events {
     # $type = Dispatch type
     # $d    = Data from payload
     my ($self, $disc, $type, $d) = @_;
-    
+
     # lowercase the event name, and append on_
     my $method = lc "on_$type";
-    say $method;
+
     # finally check to see if we have a call for it
     # and then pass the data object to it
     if ($self->can($method)) {
