@@ -1,20 +1,20 @@
-package Discord::Role::WebSocket;
+package Discord::Client::WebSocket;
 
 use 5.010;
 use Moo::Role;
 use Discord::OPCodes;
-use Discord::Role::WebSocket::Session;
-use Discord::Role::WebSocket::Session::User;
+use Discord::Client::WebSocket::Session;
+use Discord::Client::WebSocket::Session::User;
 use JSON::XS qw(encode_json decode_json);
 use Compress::Zlib;
 use Mojo::UserAgent;
 use Data::Dumper;
 
-with 'Discord::Role::WebSocket::Events';
+with 'Discord::Client::WebSocket::Events';
 
 has 'seq'	 => ( is => 'rw' );
 has 'tx' 	 => ( is => 'rw' );
-has 'session' => ( is => 'ro', default => sub { Discord::Role::WebSocket::Session->new } );
+has 'session' => ( is => 'ro', default => sub { Discord::Client::WebSocket::Session->new } );
 
 sub init_socket {
 	my ($self) = @_;

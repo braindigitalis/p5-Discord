@@ -8,7 +8,7 @@ use JSON::XS qw(decode_json encode_json);
 use Data::Dumper;
 our $VERSION = '0.001';
 
-with 'Discord::Role::WebSocket';
+with 'Discord::Client::WebSocket';
 
 has 'url' => (
     is      => 'ro',

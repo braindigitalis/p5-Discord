@@ -1,4 +1,4 @@
-package Discord::Role::WebSocket::Events::Guild;
+package Discord::Client::WebSocket::Events::Guild;
 
 use 5.010;
 use Moo::Role;
