@@ -1,4 +1,4 @@
-package Discord::Client::WebSocket::Events::Guild;
+package Discord::Client::Shards::Guild;
 
 use 5.010;
 use Moo::Role;

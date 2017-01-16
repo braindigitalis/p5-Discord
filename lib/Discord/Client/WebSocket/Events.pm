@@ -6,7 +6,7 @@ use Mojo::IOLoop;
 use Discord::OPCodes;
 use Data::Dumper;
 
-with 'Discord::Client::WebSocket::Events::Guild';
+with 'Discord::Client::Shards::Guild';
 
 has 'heartbeat' => ( is => 'rw', default => sub {
 	{
