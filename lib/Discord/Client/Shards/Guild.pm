@@ -1,25 +1,30 @@
 package Discord::Client::Shards::Guild;
 
 use 5.010;
-use Moo::Role;
+use Moo;
 
 sub on_message_create {
-    my ($self, $d) = @_;
-    my $base = $self->base_name;
+    my ($self, $disc, $d) = @_;
+    my $base = $disc->base_name;
     if ($base->can('discord_message')) {
-        $base->discord_message($self, $d);
+        $base->discord_message($disc, $d);
     }
 }
 
-sub handle_guild_events {
-    my ($self, $type, $d) = @_;
+sub handle_events {
+    # $self = Guild
+    # $disc = Discord object
+    # $type = Dispatch type
+    # $d    = Data from payload
+    my ($self, $disc, $type, $d) = @_;
+    
     # lowercase the event name, and append on_
     my $method = lc "on_$type";
-    
+    say $method;
     # finally check to see if we have a call for it
     # and then pass the data object to it
     if ($self->can($method)) {
-        $self->$method($d);
+        $self->$method($disc, $d);
     }
 }
 

@@ -6,8 +6,6 @@ use Mojo::IOLoop;
 use Discord::OPCodes;
 use Data::Dumper;
 
-with 'Discord::Client::Shards::Guild';
-
 has 'heartbeat' => ( is => 'rw', default => sub {
 	{
 		check	 => 0,
@@ -107,7 +105,8 @@ sub handle_dispatch {
     
     # if we have a channel_id, pass it to the Guild role to manage
     if (exists $message->{d}->{channel_id}) {
-        $self->handle_guild_events($type, $message->{d});
+        # Discord::Client::Shards::Guild
+        $self->guild->handle_events($self, $type, $message->{d});
     }
 
     for ($type) {

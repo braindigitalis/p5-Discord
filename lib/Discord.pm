@@ -6,6 +6,7 @@ use LWP::UserAgent;
 use MooX::Types::MooseLike::Base qw(InstanceOf);
 use JSON::XS qw(decode_json encode_json);
 use Data::Dumper;
+use Discord::Client::Shards::Guild;
 our $VERSION = '0.001';
 
 with 'Discord::Client::WebSocket';
@@ -31,6 +32,7 @@ has 'token'         => ( is => 'rw' );
 has 'gateway_url'   => ( is => 'rw' );
 has 'header'        => ( is => 'rw' );
 has 'base_name'     => ( is => 'rw' );
+has 'guild'         => ( is => 'ro', default => sub { Discord::Client::Shards::Guild->new } );
 
 sub BUILD {
     my ($self, $args) = @_;
