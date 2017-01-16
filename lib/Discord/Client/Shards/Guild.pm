@@ -11,8 +11,7 @@ method on_message_create ($disc, $d) {
     }
 }
 
-method handle_events ($disc, $type, $d)
-{
+method handle_events ($disc, $type, $d) {
     # $self = Guild
     # $disc = Discord object
     # $type = Dispatch type

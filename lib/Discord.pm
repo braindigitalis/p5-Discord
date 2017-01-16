@@ -5,7 +5,6 @@ use Moo;
 use LWP::UserAgent;
 use MooX::Types::MooseLike::Base qw(InstanceOf);
 use JSON::XS qw(decode_json encode_json);
-use Data::Dumper;
 use Discord::Helper;
 use Discord::Client::Shards::Guild;
 our $VERSION = '0.001';
