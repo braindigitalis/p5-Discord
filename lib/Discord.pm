@@ -131,14 +131,9 @@ Version 0.001
       say "Connected!";
   }
 
-  sub discord_message {
-      my ($self, $discobj, $msg) = @_;
-      say "Message -> $msg";
-  }
-  
   sub discord_ready {
       my ($self, $disc, $msg) = @_;
-      say $disc->session->user->{username} . " is ready to rock and roll!";
+      say $disc->session->user->username . " is ready to rock and roll!";
   }
 
 =cut

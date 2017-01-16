@@ -4,6 +4,7 @@ use 5.010;
 use Moo::Role;
 use Discord::OPCodes;
 use Discord::Role::WebSocket::Session;
+use Discord::Role::WebSocket::Session::User;
 use JSON::XS qw(encode_json decode_json);
 use Compress::Zlib;
 use Mojo::UserAgent;
@@ -58,10 +59,10 @@ sub init_socket {
             # filter the message through the on_receive event
             $self->on_receive($message);
             
-            # if the user has a discord_read method, then pass
+            # if the user has a discord_data method, then pass
             # the discord object and decoded message to them
-            if ($base->can('discord_message')) {
-                $base->discord_message($self, $message->{d});
+            if ($base->can('discord_data')) {
+                $base->discord_data($self, $message->{d});
             }
             
             # handle all the events from discord

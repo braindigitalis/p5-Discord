@@ -4,6 +4,7 @@ use 5.010;
 use Moo::Role;
 use Mojo::IOLoop;
 use Discord::OPCodes;
+use Data::Dumper;
 
 has 'heartbeat' => ( is => 'rw', default => sub {
 	{
@@ -29,6 +30,7 @@ sub on_hello {
 
 sub on_receive {
 	my ($self, $data) = @_;
+    say Dumper($data) if $ENV{DISCORD_DEBUG};    
 	# if we receive a sequence value, save it
 	if ($data->{s}) {
 		$self->seq($data->{s});
@@ -52,12 +54,27 @@ sub on_heartbeat_ack {
 
 sub on_ready {
     my ($self, $message) = @_;
+    # the following part is just to make pulling out our user
+    # information for the developer cleaner using chained methods
+    # instead of gross hashes (ie: $discob->session->user->username)
     # we're modifying the package structure
     # so we need to do this in a no strict refs block
     {
         no strict 'refs';
-        # loop through the data and save anything without
-        # an underscore in the beginning
+        # pull out the user first
+        my $user = $message->{d}->{user};
+        for my $k (keys %$user) {
+            if ($user->{$k}) {
+                *{"Discord::Role::WebSocket::Session::User::${k}"} = sub {
+                    return $user->{$k};
+                };
+            }
+        }
+
+        # remove the user key now we've stored it
+        delete $message->{d}->{user};
+
+        # now loop through the reset and store the data
         for my $k (keys %{$message->{d}}) {
             *{"Discord::Role::WebSocket::Session::${k}"} = sub {
                 return $message->{d}->{$k};
