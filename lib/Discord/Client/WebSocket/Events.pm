@@ -15,11 +15,11 @@ has 'heartbeat' => ( is => 'rw', default => sub {
 
 method on_hello ($data) {
 	# sets the heartbeat interval retrieved from the hello packet
-	$self->heartbeat->{interval} = $data->{d}->{heartbeat_interval};
-	
+	$self->heartbeat->{interval} = $data->{d}->{heartbeat_interval}/1000;
+
 	# send initial heartbeat
 	$self->send_heartbeat;
-	
+
 	# create the loop that sends our heartbeat to the server
 	$self->heartbeat->{loop} = Mojo::IOLoop->recurring($self->heartbeat->{interval},
         sub { $self->send_heartbeat; },
@@ -27,7 +27,7 @@ method on_hello ($data) {
 }
 
 method on_receive ($data) {
-    say Dumper($data) if $ENV{DISCORD_DEBUG};    
+    say Dumper($data) if $ENV{DISCORD_DEBUG};
 	# if we receive a sequence value, save it
 	if ($data->{s}) {
 		$self->seq($data->{s});
@@ -37,7 +37,7 @@ method on_receive ($data) {
 method on_cleanup {
 	# undefine the transaction attribute
 	$self->tx(undef);
-	
+
 	# stop sending heartbeats
 	Mojo::IOLoop->remove($self->heartbeat->{loop});
 }
@@ -75,7 +75,7 @@ method on_ready ($message) {
             };
         }
     }
-    
+
     my $base = $self->base_name;
     if ($base->can('discord_ready')) {
         $base->discord_ready($self, $message->{d});
@@ -94,7 +94,7 @@ method handle_events ($message) {
 
 method handle_dispatch ($message) {
     my $type = $message->{t};
-    
+
     # if we have a channel_id, pass it to the Guild role to manage
     if (exists $message->{d}->{channel_id} or $message->{t} =~ /^GUILD_/) {
         # Discord::Client::Shards::Guild
