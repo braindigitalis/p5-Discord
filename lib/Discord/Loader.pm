@@ -1,5 +1,6 @@
 package Discord::Loader;
 
+use 5.010;
 use Import::Into ();
 use Method::Signatures::Simple
 		method_keyword   => 'method',
@@ -8,6 +9,7 @@ use Method::Signatures::Simple
 sub import {
 	my ($class, %opts) = @_;
 	my $caller = caller;
+    feature->import(':5.10');
 	if (exists $opts{as}) {
 		if ($opts{as} eq 'Role') {
 			 __PACKAGE__->_load_framework ($caller, "Moo::Role");

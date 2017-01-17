@@ -1,6 +1,5 @@
 package Discord::Client::WebSocket::Session;
 
-use 5.010;
 use Discord::Loader;
 use Discord::Client::WebSocket::Session::User;
 

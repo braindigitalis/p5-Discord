@@ -1,6 +1,5 @@
 package Discord;
 
-use 5.010;
 use LWP::UserAgent;
 use MooX::Types::MooseLike::Base qw(InstanceOf);
 use JSON::XS qw(decode_json encode_json);
@@ -9,6 +8,7 @@ use Discord::Client::Shards::Guild;
 our $VERSION = '0.001';
 
 with 'Discord::Client::WebSocket';
+with 'Discord::Helper';
 
 has 'url' => (
     is      => 'ro',
@@ -38,6 +38,9 @@ func BUILD ($self, $args) {
     # so we know where to fire off the event methods to
     my $caller = caller 1;
     $self->base_name($caller);
+
+    # load all the helper methods into the base class
+    $self->load_helper($caller);
 
     # if client_id and client_secret are missing
     # then we must be a bot

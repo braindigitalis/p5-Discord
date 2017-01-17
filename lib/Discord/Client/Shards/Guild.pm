@@ -1,6 +1,5 @@
 package Discord::Client::Shards::Guild;
 
-use 5.010;
 use Discord::Loader;
 
 with 'Discord::Client::Shards::Guild::Message';

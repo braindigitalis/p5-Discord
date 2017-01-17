@@ -1,6 +1,5 @@
 package Discord::Client::WebSocket;
 
-use 5.010;
 use Discord::OPCodes;
 use Discord::Loader as => 'Role';
 use Discord::Client::WebSocket::Session;
