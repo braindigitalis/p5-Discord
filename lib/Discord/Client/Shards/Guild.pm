@@ -1,8 +1,7 @@
 package Discord::Client::Shards::Guild;
 
 use 5.010;
-use Moo;
-use Discord::Helper;
+use Discord::Loader;
 
 method on_message_create ($disc, $d) {
     my $base = $disc->base_name;
@@ -16,7 +15,6 @@ method handle_events ($disc, $type, $d) {
     # $disc = Discord object
     # $type = Dispatch type
     # $d    = Data from payload
-    #my ($self, $disc, $type, $d) = @_;
 
     # lowercase the event name, and append on_
     my $method = lc "on_$type";

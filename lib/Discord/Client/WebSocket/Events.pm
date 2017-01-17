@@ -1,9 +1,8 @@
 package Discord::Client::WebSocket::Events;
 
 use 5.010;
-use Moo::Role;
 use Mojo::IOLoop;
-use Discord::Helper;
+use Discord::Loader as => 'Role';
 use Discord::OPCodes;
 use Data::Dumper;
 

@@ -1,11 +1,10 @@
 package Discord;
 
 use 5.010;
-use Moo;
 use LWP::UserAgent;
 use MooX::Types::MooseLike::Base qw(InstanceOf);
 use JSON::XS qw(decode_json encode_json);
-use Discord::Helper;
+use Discord::Loader;
 use Discord::Client::Shards::Guild;
 our $VERSION = '0.001';
 

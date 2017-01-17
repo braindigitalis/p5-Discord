@@ -1,9 +1,8 @@
 package Discord::Client::WebSocket;
 
 use 5.010;
-use Moo::Role;
 use Discord::OPCodes;
-use Discord::Helper;
+use Discord::Loader as => 'Role';
 use Discord::Client::WebSocket::Session;
 use Discord::Client::WebSocket::Session::User;
 use JSON::XS qw(encode_json decode_json);
