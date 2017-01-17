@@ -96,7 +96,7 @@ method handle_dispatch ($message) {
     my $type = $message->{t};
     
     # if we have a channel_id, pass it to the Guild role to manage
-    if (exists $message->{d}->{channel_id}) {
+    if (exists $message->{d}->{channel_id} or $message->{t} =~ /^GUILD_/) {
         # Discord::Client::Shards::Guild
         $self->guild->handle_events($self, $type, $message->{d});
     }

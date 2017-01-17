@@ -11,6 +11,13 @@ method on_message_create ($disc, $d) {
     }
 }
 
+method on_guild_create ($disc, $d) {
+    my $base = $disc->base_name;
+    if ($base->can('discord_guild_create')) {
+        $base->discord_guild_create($disc, $d);
+    }
+}
+
 method handle_events ($disc, $type, $d) {
     # $self = Guild
     # $disc = Discord object

@@ -1,6 +1,6 @@
 package Discord;
 
-use LWP::UserAgent;
+use Mojo::UserAgent;
 use MooX::Types::MooseLike::Base qw(InstanceOf);
 use JSON::XS qw(decode_json encode_json);
 use Discord::Loader;
@@ -15,11 +15,7 @@ has 'url' => (
     default => sub { 'https://discordapp.com/api' }
 );
 
-has 'ua' => (
-    is      => 'ro',
-    isa     => InstanceOf['LWP::UserAgent'],
-    builder => '_build_ua'
-);
+has 'ua' => ( is      => 'rw' );
 
 has 'client_id'     => ( is => 'rw' );
 has 'client_secret' => ( is => 'rw' );
@@ -48,8 +44,22 @@ func BUILD ($self, $args) {
         $self->bot(1);
     }
 
-    # send the header with our authorization
-    $self->set_header();
+    # set up the user agent
+    my $ua = Mojo::UserAgent->new;
+
+    # authorize by sending the token
+    $ua->on(start => sub {
+        my ($ua, $tx) = @_;
+        my $tok = $self->token;
+        if ($self->bot) { $tok = "Bot ${tok}"; }
+        $tx->req->headers->authorization($tok);
+    });
+
+    $ua->transactor->name('p5-Discord');
+    $ua->inactivity_timeout(110);
+    $ua->connect_timeout(10);
+    
+    $self->ua($ua);
 
     # get the gateway url
     my $res = $self->request();
@@ -65,15 +75,9 @@ func BUILD ($self, $args) {
 }
 
 method request ($content) {
-    my $req = HTTP::Request->new(
-        'GET',
-        $self->api_url,
-        $self->header,
-    );
-
-    my $res = decode_json($self->ua->request($req)->content);
-
-    return $res;
+    my $ua = $self->ua;
+    my $tx = $ua->get($self->api_url);
+    return $tx->res->json;
 }
 
 method api_url {
@@ -81,26 +85,10 @@ method api_url {
         $self->url . '/gateway/bot' : '/gateway';
 }
 
-method set_header {
-    my $h = HTTP::Headers->new;
-    if ($self->bot and $self->token) {
-        $h->header('Authorization' => 'Bot ' . $self->token);
-    }
-    
-    $self->header($h);
-    return $self;
-}
-
 method connect {
     # initialize the websocket
     $self->init_socket();
     return $self;
-}
-
-method _build_ua {
-    my $lwp = LWP::UserAgent->new;
-    $lwp->agent("p5-Discord/${VERSION}");
-    return $lwp;
 }
 
 =head1 NAME
@@ -115,27 +103,42 @@ Version 0.001
 
 =head1 SYNOPSIS
 
-  use 5.010;
+  package DiscordBot;
+  
   use Discord;
+  use Discord::Loader; # imports signatures and Moo (optional)
   
-  my $discord = Discord->new(
-      token => 'TOKEN_FOR_BOT',
-  )->connect;
+  has 'discord' => (
+      is      => 'ro',
+      default => sub {
+          Discord->new(
+              token => 'MY_BOT_TOKEN'
+          );
+      }
+  );
   
-  sub discord_init {
-      my ($self, $disc, $res) = @_;
-      say "Connected!";
+  # called when the constructor is run (new)
+  func BUILD ($self) {
+      $self->discord->connect;
   }
-
-  sub discord_ready {
-      my ($self, $disc, $msg) = @_;
-      say $disc->session->user->username . " is ready to rock and roll!";
+  
+  method discord_ready ($disc, $msg) {
+      say $disc->session->user->username
+          . " is ready to rock 'n roll";
   }
-
-  sub discord_message {
-      my ($self, $disc, $msg) = @_;
-      say "Someone said: " . $msg->{content};
+  
+  method discord_message ($disc, $msg) {
+      my $content = $msg->{content};
+      say "Starts with: " . $self->starts_with($content);
+      say "Message: $content";
   }
+  
+  method discord_guild_create ($disc, $msg) {
+      say "Joined guild "
+        . $msg->{name} . " at " . $msg->{joined_at};
+  }
+  
+  DiscordBot->new;
 
 =cut
 

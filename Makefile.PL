@@ -22,8 +22,6 @@ WriteMakefile(
         'Mojo::UserAgent' => 0,
         'Mojo::IOLoop' => 0,
         'Compress:Zlib' => 0,
-        'LWP::UserAgent' => 0,
-        'LWP::Protocol::https' => 0,
         'Method::Signatures::Simple' => 0,
         'Import::Into' => 0,
     },

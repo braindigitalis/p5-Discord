@@ -23,12 +23,12 @@ method init_socket {
 	my $url = $self->gateway_url .
         '?v=' . $self->api_version . '&encoding=' . $self->encoding;
 
-    my $ua = Mojo::UserAgent->new;
+    my $ua = $self->ua; 
 
-    $ua->transactor->name('p5-Discord');
+    #$ua->transactor->name('p5-Discord');
   	$ua->websocket($url => sub {
         my ($ua, $tx) = @_;
-        
+
         # check to make sure we have a valid websocket
         # if not, run the cleanup event
         unless ($tx->is_websocket) {
