@@ -7,6 +7,7 @@ use Discord::Client::WebSocket::Session::User;
 use JSON::XS qw(encode_json decode_json);
 use Compress::Zlib;
 use Mojo::UserAgent;
+use Encode;
 use Data::Dumper;
 
 with 'Discord::Client::WebSocket::Events';
@@ -52,7 +53,7 @@ method init_socket {
         $tx->on(message => sub {
             my ($tx, $json) = @_;
             # decode the json from the server into a perl HASH
-            my $message = decode_json($json);
+            my $message = decode_json(Encode::encode_utf8($json));
         
             # filter the message through the on_receive event
             $self->on_receive($message);
