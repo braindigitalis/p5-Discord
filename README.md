@@ -9,22 +9,42 @@ Version 0.001
 # SYNOPSIS
 
 ```perl
-use 5.010;
+package DiscordBot;
+
 use Discord;
+use Discord::Loader; # imports signatures and Moo (optional)
 
-my $discord = Discord->new(
-    token => 'TOKEN_FOR_BOT',
-)->connect;
+has 'discord' => (
+    is      => 'ro',
+    default => sub {
+        Discord->new(
+            token => 'MY_BOT_TOKEN'
+        );
+    }
+);
 
-sub discord_init {
-    my ($self, $discobj, $res) = @_;
-    say "Connected!";
+# called when the constructor is run (new)
+func BUILD ($self) {
+    $self->discord->connect;
 }
 
-sub discord_ready {
-    my ($self, $disc, $msg) = @_;
-    say $disc->session->user->username . " is ready to rock and roll!";
+method discord_ready ($disc, $msg) {
+    say $disc->session->user->username
+        . " is ready to rock 'n roll";
 }
+
+method discord_message ($disc, $msg) {
+    my $content = $msg->{content};
+    say "Starts with: " . $self->starts_with($content);
+    say "Message: $content";
+}
+
+method discord_guild_create ($disc, $msg) {
+    say "Joined guild "
+      . $msg->{name} . " at " . $msg->{joined_at};
+}
+
+DiscordBot->new;
 ```
 
 # AUTHOR
