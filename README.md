@@ -57,8 +57,8 @@ There will be plenty.
 
 # ACKNOWLEDGEMENTS
 
-\- Me
-\- Coffee
+- Lots of coffee
+- Luna
 
 # LICENSE AND COPYRIGHT
 
@@ -99,3 +99,15 @@ YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
 CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
 CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 155:
+
+    '=item' outside of any '=over'
+
+- Around line 163:
+
+    You forgot a '=back' before '=head1'
