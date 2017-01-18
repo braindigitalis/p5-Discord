@@ -152,8 +152,13 @@ There will be plenty.
 
 =head1 ACKNOWLEDGEMENTS
 
-- Me
-- Coffee
+=item *
+
+Lots of coffee
+
+=item *
+
+Luna
 
 =head1 LICENSE AND COPYRIGHT
 
