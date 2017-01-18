@@ -26,9 +26,6 @@ has 'throttle'  => (
 );
 
 method init_socket {
-    # apply the throttle to _send
-    $self->throttle->apply_to(__PACKAGE__ . "::_send");
-
 	# store the base name of the package using our library
 	my $base = $self->base_name;
 
@@ -104,8 +101,10 @@ method send_heartbeat {
 method _send ($payload) {
 	# convert the payload from a perl HASH to json string
 	# then send it to the server
-	my $enc_pay = encode_json($payload);
-	$self->tx->send($enc_pay);
+	 $self->throttle->apply(sub {
+        my $enc_pay = encode_json($payload);
+        $self->tx->send($enc_pay);
+    });
 }
 
 method identify {
