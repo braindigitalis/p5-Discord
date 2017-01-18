@@ -1,6 +1,7 @@
 package Discord::Client::WebSocket;
 
 use Discord::Constants::OPCodes;
+use Discord::Constants::CloseCodes;
 use Discord::Loader as => 'Role';
 use Discord::Client::WebSocket::Session;
 use Discord::Client::WebSocket::Session::User;
