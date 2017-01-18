@@ -10,6 +10,7 @@ has 'heartbeat' => ( is => 'rw', default => sub {
 		check	 => 0,
 		interval => 0,
 		loop	 => undef,
+        first_ack => 1, 
 	}
 } );
 
@@ -43,6 +44,12 @@ method on_cleanup {
 }
 
 method on_heartbeat_ack ($data) {
+    # send identify on our first ack
+    if ($self->heartbeat->{first_ack}) {
+        $self->identify;
+        $self->heartbeat->{first_ack} = 0;
+    }
+
 	$self->heartbeat->{check}--;
 	say "-> Recieved heartbeat ack" if $ENV{DISCORD_DEBUG};;
 }
