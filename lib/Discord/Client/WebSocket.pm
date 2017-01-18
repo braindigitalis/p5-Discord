@@ -4,6 +4,7 @@ use Discord::OPCodes;
 use Discord::Loader as => 'Role';
 use Discord::Client::WebSocket::Session;
 use Discord::Client::WebSocket::Session::User;
+use Discord::Common::Throttler;
 use JSON::XS qw(encode_json decode_json);
 use Compress::Zlib;
 use Mojo::UserAgent;
@@ -12,11 +13,20 @@ use Data::Dumper;
 
 with 'Discord::Client::WebSocket::Events';
 
-has 'seq'	 => ( is => 'rw' );
-has 'tx' 	 => ( is => 'rw' );
-has 'session' => ( is => 'ro', default => sub { Discord::Client::WebSocket::Session->new } );
+has 'seq'       => ( is => 'rw' );
+has 'tx'        => ( is => 'rw' );
+has 'session'   => ( is => 'ro', default => sub { Discord::Client::WebSocket::Session->new } );
+has 'throttle'  => (
+    is => 'ro',
+    default => sub {
+        Discord::Common::Throttler->new(frequency => 10, limit => 1)
+    }
+);
 
 method init_socket {
+    # apply the throttle to _send
+    $self->throttle->apply_to(__PACKAGE__ . "::_send");
+    
 	# store the base name of the package using our library
 	my $base = $self->base_name;
 	
