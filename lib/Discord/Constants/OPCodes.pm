@@ -1,4 +1,4 @@
-package Discord::OPCodes;
+package Discord::Constants::OPCodes;
 
 # this package just allows us to use human readable names
 # when referencing op codes
@@ -11,6 +11,7 @@ use constant {
 	RESUME			=> 6,
 	RECONNECT 		=> 7,
 	GUILD_REQUEST 	=> 8,
+  INVALID_SESSION => 9,
 	HELLO			=> 10,
 	HEARTBEAT_ACK 	=> 11,
 };

@@ -2,7 +2,7 @@ package Discord::Client::WebSocket::Events;
 
 use Mojo::IOLoop;
 use Discord::Loader as => 'Role';
-use Discord::OPCodes;
+use Discord::Constants::OPCodes;
 use Data::Dumper;
 
 has 'heartbeat' => ( is => 'rw', default => sub {
@@ -86,9 +86,9 @@ method handle_events ($message) {
     # perl style switch/case to pass the events around
     # to their respective methods based on the op code from the server
     for ($message->{op}) {
-        if ($_ == Discord::OPCodes::HELLO) { $self->on_hello($message); }
-        if ($_ == Discord::OPCodes::HEARTBEAT_ACK) { $self->on_heartbeat_ack($message); }
-        if ($_ == Discord::OPCodes::DISPATCH) { $self->handle_dispatch($message); }
+        if ($_ == Discord::Constants::OPCodes::HELLO) { $self->on_hello($message); }
+        if ($_ == Discord::Constants::OPCodes::HEARTBEAT_ACK) { $self->on_heartbeat_ack($message); }
+        if ($_ == Discord::Constants::OPCodes::DISPATCH) { $self->handle_dispatch($message); }
     }
 }
 
