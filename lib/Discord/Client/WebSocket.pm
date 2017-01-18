@@ -49,14 +49,16 @@ method init_socket {
         
         # store the transaction object and send identify payload
         $self->tx($tx);
-        $self->identify;
         
         # when the connection is closed
         $tx->on(finish => sub {
             my ($tx, $code, $reason) = @_;
+
             if ($base->can('discord_close')) {
           	    $base->discord_close($self, $tx, $code, $reason);
             }
+
+            $self->on_cleanup;
         });
         
         # this starts the main loop, checking for messages from the server
@@ -112,7 +114,7 @@ method identify {
 		        '$referrer'			=> "",
 		        '$referring_domain'	=> ""
 		    },
-		    "compress" => 1,
+		    "compress" => \1,
 		    "large_threshold" => 250,
 		},
 	});
