@@ -10,7 +10,6 @@ use JSON::XS qw(encode_json decode_json);
 use Compress::Zlib;
 use Mojo::UserAgent;
 use Encode;
-use Data::Dumper;
 
 with 'Discord::Client::WebSocket::Events';
 with 'Discord::Client::WebSocket::Events::Errors';
@@ -21,7 +20,7 @@ has 'session'   => ( is => 'ro', default => sub { Discord::Client::WebSocket::Se
 has 'throttle'  => (
     is => 'ro',
     default => sub {
-        Discord::Common::Throttler->new(frequency => 10, limit => 1)
+        Discord::Common::Throttler->new(frequency => 2)
     }
 );
 

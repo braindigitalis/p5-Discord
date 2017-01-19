@@ -28,7 +28,7 @@ method on_hello ($data) {
 }
 
 method on_receive ($data) {
-    say Dumper($data) if $ENV{DISCORD_DEBUG};
+    #say Dumper($data) if $ENV{DISCORD_DEBUG};
 	# if we receive a sequence value, save it
 	if ($data->{s}) {
 		$self->seq($data->{s});
