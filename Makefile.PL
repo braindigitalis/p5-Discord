@@ -25,7 +25,7 @@ WriteMakefile(
         'Method::Signatures::Simple' => 0,
         'Import::Into' => 0,
         'IO::Socket::SSL' => 0,
-        'Encode' => 0,
+        'Unicode::UTF8' => 0,
     },
     PREREQ_PM => {
         #'ABC'              => 1.6,

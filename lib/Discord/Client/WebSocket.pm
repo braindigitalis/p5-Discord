@@ -9,7 +9,7 @@ use Discord::Common::Throttler;
 use JSON::XS qw(encode_json decode_json);
 use Compress::Zlib;
 use Mojo::UserAgent;
-use Encode;
+use Unicode::UTF8;
 
 with 'Discord::Client::WebSocket::Events';
 with 'Discord::Client::WebSocket::Events::Errors';
@@ -20,7 +20,7 @@ has 'session'   => ( is => 'ro', default => sub { Discord::Client::WebSocket::Se
 has 'throttle'  => (
     is => 'ro',
     default => sub {
-        Discord::Common::Throttler->new(frequency => 2)
+        Discord::Common::Throttler->new(frequency => 1)
     }
 );
 
@@ -68,7 +68,7 @@ method init_socket {
         $tx->on(message => sub {
             my ($tx, $json) = @_;
             # decode the json from the server into a perl HASH
-            my $message = decode_json(Encode::encode_utf8($json));
+            my $message = decode_json(Unicode::UTF8::encode_utf8($json));
 
             # filter the message through the on_receive event
             $self->on_receive($message);
