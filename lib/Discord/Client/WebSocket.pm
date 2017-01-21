@@ -68,19 +68,23 @@ method init_socket {
         $tx->on(message => sub {
             my ($tx, $json) = @_;
             # decode the json from the server into a perl HASH
-            my $message = decode_json(Unicode::UTF8::encode_utf8($json));
+            my $message = eval { decode_json(Unicode::UTF8::encode_utf8($json)); };
 
-            # filter the message through the on_receive event
-            $self->on_receive($message);
+            # if the eval returns an error (invalid json) then
+            # we don't want to try and handle the data
+            unless ($@) {
+                # filter the message through the on_receive event
+                $self->on_receive($message);
 
-            # if the user has a discord_data method, then pass
-            # the discord object and decoded message to them
-            if ($base->can('discord_data')) {
-                $base->discord_data($self, $message->{d});
+                # if the user has a discord_data method, then pass
+                # the discord object and decoded message to them
+                if ($base->can('discord_data')) {
+                    $base->discord_data($self, $message->{d});
+                }
+
+                # handle all the events from discord
+                $self->handle_events($message);
             }
-
-            # handle all the events from discord
-            $self->handle_events($message);
         });
     });
 
