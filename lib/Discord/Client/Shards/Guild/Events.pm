@@ -33,7 +33,7 @@ method handle_events ($disc, $type, $d) {
 
     # lowercase the event name, and append on_
     my $method = lc "on_$type";
-    say "LC $method";
+
     # finally check to see if we have a call for it
     # and then pass the data object to it
     if ($self->can($method)) {

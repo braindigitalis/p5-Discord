@@ -83,7 +83,7 @@ method request ($content) {
 
 method api_url {
     return ($self->bot) ?
-        $self->url . '/gateway/bot' : '/gateway';
+        $self->url . '/gateway/bot?' : '/gateway';
 }
 
 method connect {
@@ -134,9 +134,9 @@ Version 0.001
       say "Message: $content";
   }
   
-  method discord_guild_create ($disc, $msg) {
-      say "Joined guild "
-        . $msg->{name} . " at " . $msg->{joined_at};
+  method discord_guild_create ($disc, $id) {
+      my $guild = $disc->guild->get($id);
+      say "=> Joined guild " . $guild->name;
   }
   
   DiscordBot->new;

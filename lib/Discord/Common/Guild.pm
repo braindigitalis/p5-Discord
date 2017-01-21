@@ -15,7 +15,7 @@ method add ($args) {
 		roles    => $args->{roles} // [],
 	);
 
-	$self->guilds->{guild_id} = $guild_obj;
+	$self->guilds->{$args->{guild_id}} = $guild_obj;
 	return $guild_obj;
 }
 

@@ -39,9 +39,9 @@ method discord_message ($disc, $msg) {
     say "Message: $content";
 }
 
-method discord_guild_create ($disc, $msg) {
-    say "Joined guild "
-      . $msg->{name} . " at " . $msg->{joined_at};
+method discord_guild_create ($disc, $id) {
+    my $guild = $disc->guild->get($id);
+    say "=> Joined guild " . $guild->name;
 }
 
 DiscordBot->new;
@@ -104,10 +104,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 155:
+- Around line 156:
 
     '=item' outside of any '=over'
 
-- Around line 163:
+- Around line 164:
 
     You forgot a '=back' before '=head1'
