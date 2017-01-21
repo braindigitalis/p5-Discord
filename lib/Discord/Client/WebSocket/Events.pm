@@ -3,6 +3,7 @@ package Discord::Client::WebSocket::Events;
 use Mojo::IOLoop;
 use Discord::Loader as => 'Role';
 use Discord::Constants::OPCodes;
+use Discord::Client::Shards::Guild::Events;
 use Data::Dumper;
 
 has 'heartbeat' => ( is => 'rw', default => sub {
@@ -13,6 +14,8 @@ has 'heartbeat' => ( is => 'rw', default => sub {
         first_ack => 1, 
 	}
 } );
+
+has 'guild_events' => ( is => 'rw', default => sub { Discord::Client::Shards::Guild::Events->new });
 
 method on_hello ($data) {
 	# sets the heartbeat interval retrieved from the hello packet
@@ -105,7 +108,7 @@ method handle_dispatch ($message) {
     # if we have a channel_id, pass it to the Guild role to manage
     if (exists $message->{d}->{channel_id} or $message->{t} =~ /^GUILD_/) {
         # Discord::Client::Shards::Guild
-        $self->guild->handle_events($self, $type, $message->{d});
+        $self->guild_events->handle_events($self, $type, $message->{d});
     }
 
     for ($type) {
