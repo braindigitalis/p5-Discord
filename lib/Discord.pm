@@ -4,6 +4,8 @@ use Mojo::UserAgent;
 use MooX::Types::MooseLike::Base qw(InstanceOf);
 use JSON::XS qw(decode_json encode_json);
 use Discord::Loader;
+use Discord::Common::Guild;
+
 our $VERSION = '0.001';
 
 with 'Discord::Client::WebSocket';
@@ -26,6 +28,7 @@ has 'token'         => ( is => 'rw' );
 has 'gateway_url'   => ( is => 'rw' );
 has 'header'        => ( is => 'rw' );
 has 'base_name'     => ( is => 'rw' );
+has 'guild'         => ( is => 'rw', default => sub { Discord::Common::Guild->new } );
 
 func BUILD ($self, $args) {
     # save the base name (package calling this library)

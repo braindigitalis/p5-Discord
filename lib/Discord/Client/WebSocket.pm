@@ -124,7 +124,7 @@ method identify {
 		        '$referring_domain'	=> ""
 		    },
 		    "compress" => \1,
-		    "large_threshold" => 250,
+		    "large_threshold" => 50,
 		},
 	});
 }
