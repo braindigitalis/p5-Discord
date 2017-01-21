@@ -1,4 +1,4 @@
-package Discord::Helper;
+package Discord::Common::Helper;
 
 use Discord::Loader as => 'Role';
 
@@ -18,10 +18,10 @@ func import_to_array ($class, $str) {
 method load_helper ($base) {
     {
         no strict 'refs';
-        for my $m (keys %{"Discord::Helper::"}) {
+        for my $m (keys %{"Discord::Common::Helper::"}) {
             if ($m =~ /^import_/) {
                 $m =~ s/import_//g;
-                *{"${base}::${m}"} = *{"Discord::Helper::import_${m}"};
+                *{"${base}::${m}"} = *{"Discord::Common::Helper::import_${m}"};
             }
         }
     }
