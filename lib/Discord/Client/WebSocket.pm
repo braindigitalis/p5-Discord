@@ -67,12 +67,12 @@ method init_socket {
         # this starts the main loop, checking for messages from the server
         $tx->on(message => sub {
             my ($tx, $json) = @_;
-            my $message = (Unicode::UTF8::valid_utf8($json)) ?
-                $json : uncompress($json);
+            my $message = eval { (Unicode::UTF8::valid_utf8($json)) ?
+                $json : uncompress($json); };
 
             if ($message) {
                 # decode the json from the server into a perl HASH
-                $message = decode_json($message);
+                $message = eval { decode_json(Unicode::UTF8::encode_utf8($message)) };
 
                 # if the eval returns an error (invalid json) then
                 # we don't want to try and handle the data
