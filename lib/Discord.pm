@@ -137,6 +137,10 @@ Version 0.001
   method discord_guild_create ($disc, $id) {
       my $guild = $disc->guild->get($id);
       say "=> Joined guild " . $guild->name;
+      say "Channels:";
+      for my $channel ($guild->channels) {
+          say "  - " . $channel->name;
+      }
   }
   
   DiscordBot->new;
