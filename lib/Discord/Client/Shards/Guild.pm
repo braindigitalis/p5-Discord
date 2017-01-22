@@ -14,17 +14,45 @@ has 'roles'         => ( is => 'rw', default => sub { [] } );
 has '_channels'      => ( is => 'rw', default => sub { {} } );
 has '_members'       => ( is => 'rw', default => sub { {} } );
 
-method add_channels ($channels) {
+method members {
+    if (wantarray) {
+        return map { $self->member($_) } keys %{$self->_members};
+    }
+}
+
+method add_members ($members) {
+    for my $member (@$members) {
+        $self->_members->{$member->{user}->{id}} = Discord::Client::Shards::Guild::Member->new(
+            guild_id    => $self->guild_id,
+            id          => $member->{user}->{id},
+            roles       => $member->{roles},
+            username    => $member->{user}->{username},
+            nick        => $member->{nick},
+            avatar      => $member->{user}->{avatar},
+            joined_at   => $member->{joined_at},
+            discriminator => $member->{user}->{discriminator},
+        );
+    }
+}
+
+method member ($member_id) {
+    if (exists $self->_members->{$member_id}) {
+        return $self->_members->{$member_id};
+    }
+
+    return;
+}
+
+method add_channels ($guild_id, $d) {
+    my $channels = $d->{channels};
     for my $chan (@$channels) {
         $self->_channels->{$chan->{id}} = Discord::Client::Shards::Guild::Channel->new(
+            guild_id => $guild_id,
             topic   => $chan->{topic},
             name    => $chan->{name},
             id      => $chan->{id},
         );
     }
-}
-
-method add_members ($members) {
 }
 
 method channels {

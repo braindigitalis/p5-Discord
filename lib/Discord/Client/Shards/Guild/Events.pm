@@ -22,7 +22,7 @@ method on_guild_create ($disc, $d) {
 
     # create the channel and member objects
     if ($guild) {
-        $guild->add_channels($d->{channels});
+        $guild->add_channels($d->{id}, $d);
         $guild->add_members($d->{members});
 
         if ($base->can('discord_guild_create')) {
