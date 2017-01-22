@@ -13,15 +13,21 @@ method on_message_create ($disc, $d) {
 
 method on_guild_create ($disc, $d) {
     my $base = $disc->base_name;
-    $disc->guild->add({
+    my $guild = $disc->guild->add({
         owner_id => $d->{owner_id},
         guild_id => $d->{id},
         name     => $d->{name},
         roles    => $d->{roles},
     });
 
-    if ($base->can('discord_guild_create')) {
-        $base->discord_guild_create($disc, $d->{id});
+    # create the channel and member objects
+    if ($guild) {
+        $guild->add_channels($d->{channels});
+        $guild->add_members($d->{members});
+
+        if ($base->can('discord_guild_create')) {
+            $base->discord_guild_create($disc, $d->{id});
+        }
     }
 }
 
