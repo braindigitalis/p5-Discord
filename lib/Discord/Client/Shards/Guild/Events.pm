@@ -1,13 +1,36 @@
 package Discord::Client::Shards::Guild::Events;
 
 use Discord::Loader;
-
-with 'Discord::Client::Shards::Guild::Message';
+use Discord::Client::Shards::Guild::Message;
+use Discord::Client::Shards::Guild::Message::User;
 
 method on_message_create ($disc, $d) {
     my $base = $disc->base_name;
     if ($base->can('discord_message')) {
-        $base->discord_message($disc, $d);
+        my $message = Discord::Client::Shards::Guild::Message->new(
+            edited_timestamp    => $d->{edited_timestamp},
+            mention_roles       => $d->{mention_roles},
+            channel_id          => $d->{channel_id},
+            type                => $d->{type},
+            tts                 => $d->{tts},
+            author              => Discord::Client::Shards::Guild::Message::User->new(
+                discriminator => $d->{author}->{discriminator},
+                username      => $d->{author}->{username},
+                avatar        => $d->{author}->{avatar},
+                id            => $d->{author}->{id},
+            ),
+            nonce               => $d->{nonce},
+            timestamp           => $d->{timestamp},
+            content             => $d->{content},
+            id                  => $d->{id},
+        );
+
+        # do we have mentions?
+        if (scalar @{$d->{mentions}}) {
+            $message->add_mentions($d->{mentions});
+        }
+
+        $base->discord_message($disc, $message);
     }
 }
 
