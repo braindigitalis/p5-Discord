@@ -30,5 +30,21 @@ method count {
 	return keys %{$self->guilds};
 }
 
+method find ($args) {
+	foreach my $key (keys %$args) {
+		# search based on channel_id
+		if ($key eq 'channel') {
+			foreach my $gid (keys %{$self->guilds}) {
+				if ($self->guilds->{$gid}->_channels->{$args->{$key}}) {
+					return $self->guilds->{$gid}->_channels->{$args->{$key}};
+				}
+			}
+
+			# we found nada
+			return;
+		}
+	}
+}
+
 1;
 __END__

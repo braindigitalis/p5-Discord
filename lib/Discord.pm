@@ -128,10 +128,12 @@ Version 0.001
           . " is ready to rock 'n roll";
   }
   
-  method discord_message ($disc, $msg) {
-      my $content = $msg->{content};
-      say "Starts with: " . $self->starts_with($content);
-      say "Message: $content";
+  method discord_message ($disc, $message) {
+      my ($channel, $guild) = (
+          $message->channel,
+          $message->channel->guild,
+      );
+      say "(" . $guild->name . ") <". $message->author->username . "/" . $channel->name . "> " . $message->content;
   }
   
   method discord_guild_create ($disc, $id) {

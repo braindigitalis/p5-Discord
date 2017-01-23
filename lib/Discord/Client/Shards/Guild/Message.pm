@@ -13,7 +13,7 @@ has 'timestamp' 		=> ( is => 'rw' );
 has 'mention_roles' 	=> ( is => 'rw', default => sub { [] } );
 has '_mentions'  		=> ( is => 'rw' ); # ArrayRef of Guild::Message::User
 has 'channel_id' 		=> ( is => 'rw' );
-
+has 'channel'           => ( is => 'rw' );
 
 method mentions {
     if (wantarray) {
@@ -31,7 +31,7 @@ method mention ($user_id) {
 
 method add_mentions ($mentions) {
     for my $mention (@$mentions) {
-        $self->_mention->{$mention->{id}} = Discord::Client::Shards::Guild::Message::User->new(
+        $self->_mentions->{$mention->{id}} = Discord::Client::Shards::Guild::Message::User->new(
             username    	=> $mention->{user}->{username},
             avatar      	=> $mention->{user}->{avatar},
             discriminator 	=> $mention->{user}->{discriminator},

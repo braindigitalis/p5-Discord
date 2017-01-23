@@ -51,6 +51,7 @@ method add_channels ($guild_id, $d) {
             topic   => $chan->{topic},
             name    => $chan->{name},
             id      => $chan->{id},
+            guild   => $self,
         );
     }
 }
