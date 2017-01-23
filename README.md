@@ -33,10 +33,12 @@ method discord_ready ($disc, $msg) {
         . " is ready to rock 'n roll";
 }
 
-method discord_message ($disc, $msg) {
-    my $content = $msg->{content};
-    say "Starts with: " . $self->starts_with($content);
-    say "Message: $content";
+method discord_message ($disc, $message) {
+    my ($channel, $guild) = (
+        $message->channel,
+        $message->channel->guild,
+    );
+    say "(" . $guild->name . ") <". $message->author->username . "/" . $channel->name . "> " . $message->content;
 }
 
 method discord_guild_create ($disc, $id) {
@@ -113,10 +115,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 165:
+- Around line 167:
 
     '=item' outside of any '=over'
 
-- Around line 173:
+- Around line 175:
 
     You forgot a '=back' before '=head1'
