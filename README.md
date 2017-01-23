@@ -41,8 +41,7 @@ method discord_message ($disc, $message) {
     say "(" . $guild->name . ") <". $message->author->username . "/" . $channel->name . "> " . $message->content;
 }
 
-method discord_guild_create ($disc, $id) {
-    my $guild = $disc->guild->get($id);
+method discord_guild_create ($disc, $guild) {
     say "=> Joined guild " . $guild->name;
     say "Members:";
     for my $member ($guild->members) {
@@ -115,10 +114,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 167:
+- Around line 166:
 
     '=item' outside of any '=over'
 
-- Around line 175:
+- Around line 174:
 
     You forgot a '=back' before '=head1'

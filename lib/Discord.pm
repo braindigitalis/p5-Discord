@@ -136,8 +136,7 @@ Version 0.001
       say "(" . $guild->name . ") <". $message->author->username . "/" . $channel->name . "> " . $message->content;
   }
   
-  method discord_guild_create ($disc, $id) {
-      my $guild = $disc->guild->get($id);
+  method discord_guild_create ($disc, $guild) {
       say "=> Joined guild " . $guild->name;
       say "Members:";
       for my $member ($guild->members) {

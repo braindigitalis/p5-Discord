@@ -50,7 +50,7 @@ method on_guild_create ($disc, $d) {
         $guild->add_members($d->{members});
 
         if ($base->can('discord_guild_create')) {
-            $base->discord_guild_create($disc, $d->{id});
+            $base->discord_guild_create($disc, $guild);
         }
     }
 }
