@@ -26,6 +26,7 @@ WriteMakefile(
         'Import::Into' => 0,
         'IO::Socket::SSL' => 0,
         'Unicode::UTF8' => 0,
+        'URI::Escape' => 0,
     },
     PREREQ_PM => {
         #'ABC'              => 1.6,

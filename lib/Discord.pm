@@ -10,13 +10,12 @@ our $VERSION = '0.001';
 
 with 'Discord::Client::WebSocket';
 with 'Discord::Common::Helper';
+with 'Discord::Common::REST';
 
 has 'url' => (
     is      => 'ro',
     default => sub { 'https://discordapp.com/api' }
 );
-
-has 'ua' => ( is      => 'rw' );
 
 has 'client_id'     => ( is => 'rw' );
 has 'client_secret' => ( is => 'rw' );
@@ -45,40 +44,9 @@ func BUILD ($self, $args) {
         $self->bot(1);
     }
 
-    # set up the user agent
-    my $ua = Mojo::UserAgent->new;
+    # Discord::Common::REST
+    $self->init_gateway();
 
-    # authorize by sending the token
-    $ua->on(start => sub {
-        my ($ua, $tx) = @_;
-        my $tok = $self->token;
-        if ($self->bot) { $tok = "Bot ${tok}"; }
-        $tx->req->headers->authorization($tok);
-    });
-
-    $ua->transactor->name('p5-Discord');
-    $ua->inactivity_timeout(110);
-    $ua->connect_timeout(10);
-    
-    $self->ua($ua);
-
-    # get the gateway url
-    my $res = $self->request();
-    if ($res and $res->{url}) {
-        $self->gateway_url($res->{url});
-        if ($res->{shards}) {
-            $self->shards($res->{shards});
-        }
-    }
-    else {
-        die "Failed to retrieve gateway URL: $res->{message}\n";
-    }
-}
-
-method request ($content) {
-    my $ua = $self->ua;
-    my $tx = $ua->get($self->api_url);
-    return $tx->res->json;
 }
 
 method api_url {
