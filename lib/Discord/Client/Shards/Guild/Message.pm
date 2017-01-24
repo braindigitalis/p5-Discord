@@ -11,7 +11,7 @@ has 'id'				=> ( is => 'rw' );
 has 'nonce'				=> ( is => 'rw' );
 has 'timestamp' 		=> ( is => 'rw' );
 has 'mention_roles' 	=> ( is => 'rw', default => sub { [] } );
-has '_mentions'  		=> ( is => 'rw' ); # ArrayRef of Guild::Message::User
+has '_mentions'  		=> ( is => 'rw', default => sub { {} } );
 has 'channel_id' 		=> ( is => 'rw' );
 has 'channel'           => ( is => 'rw' );
 
