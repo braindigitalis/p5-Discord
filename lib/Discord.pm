@@ -61,7 +61,8 @@ method api_url {
         $self->url . '/gateway/bot' : '/gateway';
 }
 
-method connect {
+method connect ($base) {
+    $self->base_name($base);
     # initialize the websocket
     $self->init_socket();
     return $self;
@@ -95,7 +96,9 @@ Version 0.001
   
   # called when the constructor is run (new)
   func BUILD ($self) {
-      $self->discord->connect;
+      # Pass the $self object to connect if you want to use $self
+      # in return calls!
+      $self->discord->connect($self);
   }
   
   method discord_ready ($disc, $msg) {

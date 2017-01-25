@@ -25,7 +25,9 @@ has 'discord' => (
 
 # called when the constructor is run (new)
 func BUILD ($self) {
-    $self->discord->connect;
+    # Pass the $self object to connect if you want to use $self
+    # in return calls!
+    $self->discord->connect($self);
 }
 
 method discord_ready ($disc, $msg) {
@@ -119,10 +121,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 146:
+- Around line 149:
 
     '=item' outside of any '=over'
 
-- Around line 154:
+- Around line 157:
 
     You forgot a '=back' before '=head1'

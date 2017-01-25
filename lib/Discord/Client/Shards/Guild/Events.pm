@@ -24,6 +24,7 @@ method on_message_create ($disc, $d) {
             content             => $d->{content},
             id                  => $d->{id},
             channel             => $disc->guild->find({ channel => $d->{channel_id}}),
+            disc                => $disc,
         );
 
         # do we have mentions?

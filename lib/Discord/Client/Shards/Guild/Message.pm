@@ -14,6 +14,7 @@ has 'mention_roles' 	=> ( is => 'rw', default => sub { [] } );
 has '_mentions'  		=> ( is => 'rw', default => sub { {} } );
 has 'channel_id' 		=> ( is => 'rw' );
 has 'channel'           => ( is => 'rw' );
+has 'disc'              => ( is => 'rw' );
 
 method mentions {
     if (wantarray) {
@@ -44,6 +45,18 @@ method add_mentions ($mentions) {
 method starts_with {
     my ($first) = split / /, $self->content;
     return $first;
+}
+
+method mentioned {
+    my $first = $self->starts_with;
+    if ($first eq '<@!' . $self->disc->session->user->id . '>') { return 1; }
+    return 0;
+}
+
+method string {
+    my $line = $self->content;
+    $line =~ s/^\S+\s*//;
+    return $line;
 }
 
 1;

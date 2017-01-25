@@ -2,7 +2,6 @@ package Discord::Client::Shards::Guild::Channel;
 
 use Discord::Loader;
 use Discord::Constants::Endpoints;
-use Unicode::UTF8;
 
 with 'Discord::Common::REST';
 
@@ -17,7 +16,7 @@ method send_message ($message) {
 	$self->disc->post_req(
 		Discord::Constants::Endpoints::CHANNEL_MESSAGES($self->id),
 		[
-			content => Unicode::UTF8::encode_utf8($message),
+			content => encode_utf8($message),
 		]
 	);
 }
