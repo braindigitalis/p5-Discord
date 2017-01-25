@@ -4,6 +4,8 @@ package Discord::Constants::Endpoints;
 # and to provide a quick way to access these by returning a string
 # that is appendable to the API URL
 
+use Discord::Loader;
+
 use constant CHANNELS => "/channels";
 use constant GUILDS => "/guilds";
 use constant USERS => "/users";
