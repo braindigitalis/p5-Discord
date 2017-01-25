@@ -38,7 +38,12 @@ method discord_message ($disc, $message) {
         $message->channel,
         $message->channel->guild,
     );
-    say "(" . $guild->name . ") <". $message->author->username . "/" . $channel->name . "> " . $message->content;
+    say "(" . $guild->name . ") <". $message->author->username
+      . "/" . $channel->name . "> " . $message->content;
+
+    if ($message->starts_with eq 'mojo,') {
+        $channel->send_message("Hey there, " . $message->author->username . "!");
+    }
 }
 
 method discord_guild_create ($disc, $guild) {
@@ -114,10 +119,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 166:
+- Around line 146:
 
     '=item' outside of any '=over'
 
-- Around line 174:
+- Around line 154:
 
     You forgot a '=back' before '=head1'
