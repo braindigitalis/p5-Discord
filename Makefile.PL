@@ -27,6 +27,9 @@ WriteMakefile(
         'IO::Socket::SSL' => 0,
         'Unicode::UTF8' => 0,
         'URI::Escape' => 0,
+        'LWP::UserAgent' => 0,
+        'HTTP::Request' => 0,
+        'HTTP::Headers' => 0,
     },
     PREREQ_PM => {
         #'ABC'              => 1.6,

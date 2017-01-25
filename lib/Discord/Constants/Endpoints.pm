@@ -126,7 +126,7 @@ func GUILD_INTEGRATION ($guild_id, $int_id) {
 };
 
 func GUILD_INTEGRATION_SYNC ($guild_id, $int_id) {
-    return "/guilds/${guildID}/integrations/${int_id}/sync";
+    return "/guilds/${guild_id}/integrations/${int_id}/sync";
 };
 
 func GUILD_ROLE ($guild_id, $role_id) {
@@ -134,7 +134,7 @@ func GUILD_ROLE ($guild_id, $role_id) {
 };
 
 func GUILD_ROLES ($guild_id) {
-    return "/guilds/${guildID}/roles";
+    return "/guilds/${guild_id}/roles";
 };
 
 func GUILD_EMOJI ($guild_id, $emoji_id) {

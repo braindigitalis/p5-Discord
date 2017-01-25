@@ -1,30 +1,18 @@
 package Discord::Common::REST;
 
 use Discord::Loader as => 'Role';
-use URI::Escape qw/uri_escape uri_escape_utf8 uri_unescape/;
+use LWP::UserAgent;
+use HTTP::Request;
+use HTTP::Headers;
+use URI::Escape qw(uri_escape uri_escape_utf8 uri_unescape);
+use Unicode::UTF8 qw(encode_utf8);
+use JSON::XS qw(encode_json decode_json);
 
-has 'ua' => ( is => 'rw', default => sub { Mojo::UserAgent->new } );
+has 'ua' => ( is => 'rw', default => sub { LWP::UserAgent->new } );
 
 method init_gateway {
-	my $ua = $self->ua;
 
-	$ua->on(start => sub {
-        my ($ua, $tx) = @_;
-        my $tok = $self->token;
-        if ($self->bot) { $tok = "Bot ${tok}"; }
-        $tx->req->headers->authorization($tok);
-    });
-
-    $ua->transactor->name('p5-Discord');
-    $ua->inactivity_timeout(110);
-    $ua->connect_timeout(10);
-
-    $self->set_gateway_url();
-}
-
-method set_gateway_url {
-	my $res = $self->get($self->api_url);
-
+    my $res = $self->get_req($self->api_url);
     if ($res and $res->{url}) {
         $self->gateway_url($res->{url});
         if ($res->{shards}) {
@@ -36,21 +24,26 @@ method set_gateway_url {
     }
 }
 
-method get ($url, $content) {
+method get_req ($url, $content) {
     my $ua = $self->ua;
     if ($content) {
     	$url = "${url}?" . $self->_build_params($content);
     }
-    my $tx = $ua->get($url);
-    return $tx->res->json;
+
+    my $h = HTTP::Headers->new(
+        "Authorization" => "Bot " . $self->token,
+        "User-Agent"    => 'p5-Discord',
+    );
+
+    my $req = HTTP::Request->new(GET => $url, $h);
+    my $res = $self->ua->request($req);
+    return decode_json($res->content);
 }
 
-method post ($url, $content) {
-	my $ua = $self->ua;
-	$ua->post($url => json => $content => func {
-		my ($ua, $tx) = @_;
-		return $tx->res->body;
-	});
+method post_req ($url, $content) {
+    $url = $self->url . $url;
+
+    my $res = $self->ua->post($url, $self->_build_post_headers, Content => $content);
 }
 
 method _build_params ($args) {
@@ -63,6 +56,14 @@ method _build_params ($args) {
 
     return (join '&', @args) || '';
 }
+
+method _build_post_headers {
+    return (
+        "Authorization" => ($self->bot) ? "Bot " . $self->token : "Bearer " . $self->token,
+        "User-Agent"    => "p5-Discord",
+    );
+}
+
 
 1;
 __END__

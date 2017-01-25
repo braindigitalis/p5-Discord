@@ -40,5 +40,11 @@ method add_mentions ($mentions) {
     }
 }
 
+# Helper methods
+method starts_with {
+    my ($first) = split / /, $self->content;
+    return $first;
+}
+
 1;
 __END__

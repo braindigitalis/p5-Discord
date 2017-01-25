@@ -43,7 +43,7 @@ method member ($member_id) {
     return;
 }
 
-method add_channels ($guild_id, $d) {
+method add_channels ($disc, $guild_id, $d) {
     my $channels = $d->{channels};
     for my $chan (@$channels) {
         $self->_channels->{$chan->{id}} = Discord::Client::Shards::Guild::Channel->new(
@@ -52,6 +52,7 @@ method add_channels ($guild_id, $d) {
             name    => $chan->{name},
             id      => $chan->{id},
             guild   => $self,
+            disc    => $disc,
         );
     }
 }

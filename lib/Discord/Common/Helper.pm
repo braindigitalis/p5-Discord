@@ -5,7 +5,7 @@ use Discord::Loader as => 'Role';
 # just some stuff to make the bot developers lives easier
 
 # grabs the first word of a string and returns it
-func import_starts_with ($class, $str) {
+func no_import_starts_with ($class, $str) {
     my ($first) = split / /, $str;
     return $first;
 }

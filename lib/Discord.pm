@@ -44,14 +44,21 @@ func BUILD ($self, $args) {
         $self->bot(1);
     }
 
-    # Discord::Common::REST
+    #$ua->transactor->name('p5-Discord');
+    #$ua->inactivity_timeout(110);
+    #$ua->connect_timeout(10);
+
     $self->init_gateway();
 
 }
 
+method post_message ($url, $content) {
+  $self->rest->post_req($url, $content);
+}
+
 method api_url {
     return ($self->bot) ?
-        $self->url . '/gateway/bot?' : '/gateway';
+        $self->url . '/gateway/bot' : '/gateway';
 }
 
 method connect {
@@ -101,7 +108,12 @@ Version 0.001
           $message->channel,
           $message->channel->guild,
       );
-      say "(" . $guild->name . ") <". $message->author->username . "/" . $channel->name . "> " . $message->content;
+      say "(" . $guild->name . ") <". $message->author->username
+        . "/" . $channel->name . "> " . $message->content;
+
+      if ($message->starts_with eq 'mojo,') {
+          $channel->send_message("Hey there, " . $message->author->username . "!");
+      }
   }
   
   method discord_guild_create ($disc, $guild) {

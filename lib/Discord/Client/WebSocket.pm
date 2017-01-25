@@ -32,7 +32,7 @@ method init_socket {
 	my $url = $self->gateway_url .
         '?v=' . $self->api_version . '&encoding=' . $self->encoding;
 
-    my $ua = $self->ua;
+    my $ua = Mojo::UserAgent->new;
 
     #$ua->transactor->name('p5-Discord');
   	$ua->websocket($url => sub {
