@@ -6,7 +6,7 @@ use Discord::Client::Shards::Guild::Message::User;
 
 method on_message_create ($disc, $d) {
     my $base = $disc->base_name;
-    if ($base->can('discord_message')) {
+    if (exists $disc->_events->{message}) {
         my $message = Discord::Client::Shards::Guild::Message->new(
             edited_timestamp    => $d->{edited_timestamp},
             mention_roles       => $d->{mention_roles},
@@ -32,7 +32,7 @@ method on_message_create ($disc, $d) {
             $message->add_mentions($d->{mentions});
         }
 
-        $base->discord_message($disc, $message);
+        $disc->_events->{message}->($message);
     }
 }
 
@@ -50,8 +50,8 @@ method on_guild_create ($disc, $d) {
         $guild->add_channels($disc, $d->{id}, $d);
         $guild->add_members($d->{members});
 
-        if ($base->can('discord_guild_create')) {
-            $base->discord_guild_create($disc, $guild);
+        if (exists $disc->_events->{guild_create}) {
+            $disc->_events->{guild_create}->($guild);
         }
     }
 }

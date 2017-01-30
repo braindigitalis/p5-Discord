@@ -28,6 +28,7 @@ has 'gateway_url'   => ( is => 'rw' );
 has 'header'        => ( is => 'rw' );
 has 'base_name'     => ( is => 'rw' );
 has 'guild'         => ( is => 'rw', default => sub { Discord::Common::Guild->new } );
+has '_events'       => ( is => 'rw', default => sub { {} } );
 
 func BUILD ($self, $args) {
     # save the base name (package calling this library)
@@ -62,10 +63,14 @@ method api_url {
 }
 
 method connect ($base) {
-    $self->base_name($base);
+    $self->base_name($base) if $base;
     # initialize the websocket
     $self->init_socket();
     return $self;
+}
+
+method on ($name, $code) {
+    $self->_events->{$name} = $code;
 }
 
 =head1 NAME
@@ -95,43 +100,39 @@ Version 0.001
   );
   
   # called when the constructor is run (new)
-  func BUILD ($self) {
-      # Pass the $self object to connect if you want to use $self
-      # in return calls!
-      $self->discord->connect($self);
+  method BUILD {
+      # you can perform any other pre-loadout stuff here
+      # then finally load all the events
+      $self->load_events();
   }
-  
-  method discord_ready ($disc, $msg) {
-      say $disc->session->user->username
-          . " is ready to rock 'n roll";
-  }
-  
-  method discord_message ($disc, $message) {
-      my ($channel, $guild) = (
-          $message->channel,
-          $message->channel->guild,
-      );
-      say "(" . $guild->name . ") <". $message->author->username
-        . "/" . $channel->name . "> " . $message->content;
 
-      if ($message->starts_with eq 'mojo,') {
-          $channel->send_message("Hey there, " . $message->author->username . "!");
-      }
+  method load_events {
+      my $disc = $self->discord;
+
+      $disc->on(ready => func {
+          say "=> " . $disc->session->user->username . " is ready!";
+      });
+
+      $disc->on(disconnected => func ($code, $reason) {
+          say "Disconnected ($code): $reason";
+      });
+
+      $disc->on(guild_create => func ($guild) {
+          say "=> Joined guild " . $guild->name;
+      });
+
+      $disc->on(message => func ($message) {
+          say "Message";
+          say $message->author->username . ": " . $message->content;
+
+          if ($message->mentioned) {
+              $message->channel->send_message("Hello, " . $message->author->username);
+          }
+      });
+
+      $disc->connect();
   }
-  
-  method discord_guild_create ($disc, $guild) {
-      say "=> Joined guild " . $guild->name;
-      say "Members:";
-      for my $member ($guild->members) {
-          say "  - " . $member->username;
-      }
-      
-      say "Channels:";
-      for my $channel ($guild->channels) {
-          say "  - " . $channel->name;
-      }
-  }
-  
+
   DiscordBot->new;
 
 =cut

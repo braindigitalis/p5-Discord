@@ -49,7 +49,7 @@ method starts_with {
 
 method mentioned {
     my $first = $self->starts_with;
-    if ($first eq '<@!' . $self->disc->session->user->id . '>') { return 1; }
+    if ($first eq '<@' . $self->disc->session->user->id . '>') { return 1; }
     return 0;
 }
 

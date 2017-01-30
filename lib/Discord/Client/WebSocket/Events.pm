@@ -87,8 +87,8 @@ method on_ready ($message) {
     }
 
     my $base = $self->base_name;
-    if ($base->can('discord_ready')) {
-        $base->discord_ready($self, $message->{d});
+    if (exists $self->_events->{ready}) {
+        $self->_events->{ready}->($message->{d});
     }
 }
 

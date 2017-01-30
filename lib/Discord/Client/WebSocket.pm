@@ -57,8 +57,8 @@ method init_socket {
             		my $reason = $self->handle_error($code);
             		$base->discord_error($self, $code, $reason);
             }
-            if ($base->can('discord_close')) {
-          	    $base->discord_close($self, $tx, $code, $reason);
+            if (exists $self->_events->{disconnected}) {
+          	    $self->_events->{disconnected}->($code, $reason);
             }
 
             $self->on_cleanup;

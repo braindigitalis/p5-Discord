@@ -24,41 +24,37 @@ has 'discord' => (
 );
 
 # called when the constructor is run (new)
-func BUILD ($self) {
-    # Pass the $self object to connect if you want to use $self
-    # in return calls!
-    $self->discord->connect($self);
+method BUILD {
+    # you can perform any other pre-loadout stuff here
+    # then finally load all the events
+    $self->load_events();
 }
 
-method discord_ready ($disc, $msg) {
-    say $disc->session->user->username
-        . " is ready to rock 'n roll";
-}
+method load_events {
+    my $disc = $self->discord;
 
-method discord_message ($disc, $message) {
-    my ($channel, $guild) = (
-        $message->channel,
-        $message->channel->guild,
-    );
-    say "(" . $guild->name . ") <". $message->author->username
-      . "/" . $channel->name . "> " . $message->content;
+    $disc->on(ready => func {
+        say "=> " . $disc->session->user->username . " is ready!";
+    });
 
-    if ($message->starts_with eq 'mojo,') {
-        $channel->send_message("Hey there, " . $message->author->username . "!");
-    }
-}
+    $disc->on(disconnected => func ($code, $reason) {
+        say "Disconnected ($code): $reason";
+    });
 
-method discord_guild_create ($disc, $guild) {
-    say "=> Joined guild " . $guild->name;
-    say "Members:";
-    for my $member ($guild->members) {
-        say "  - " . $member->username;
-    }
-    
-    say "Channels:";
-    for my $channel ($guild->channels) {
-        say "  - " . $channel->name;
-    }
+    $disc->on(guild_create => func ($guild) {
+        say "=> Joined guild " . $guild->name;
+    });
+
+    $disc->on(message => func ($message) {
+        say "Message";
+        say $message->author->username . ": " . $message->content;
+
+        if ($message->mentioned) {
+            $message->channel->send_message("Hello, " . $message->author->username);
+        }
+    });
+
+    $disc->connect();
 }
 
 DiscordBot->new;
@@ -121,10 +117,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 149:
+- Around line 150:
 
     '=item' outside of any '=over'
 
-- Around line 157:
+- Around line 158:
 
     You forgot a '=back' before '=head1'
