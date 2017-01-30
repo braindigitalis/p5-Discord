@@ -16,7 +16,7 @@ with 'Discord::Client::WebSocket::Events::Errors';
 
 has 'seq'       => ( is => 'rw' );
 has 'tx'        => ( is => 'rw' );
-has 'session'   => ( is => 'ro', default => sub { Discord::Client::WebSocket::Session->new } );
+has 'session'   => ( is => 'rw' );
 has 'throttle'  => (
     is => 'ro',
     default => sub {
@@ -27,6 +27,10 @@ has 'throttle'  => (
 method init_socket {
 	# store the base name of the package using our library
 	my $base = $self->base_name;
+
+    $self->session(
+        Discord::Client::WebSocket::Session->new(disc => $self)
+    );
 
 	# create the gateway URL, appending the api version and encoding type
 	my $url = $self->gateway_url .
