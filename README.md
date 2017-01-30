@@ -46,7 +46,6 @@ method load_events {
     });
 
     $disc->on(message => func ($message) {
-        say "Message";
         say $message->author->username . ": " . $message->content;
 
         if ($message->mentioned) {
@@ -117,10 +116,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 150:
+- Around line 149:
 
     '=item' outside of any '=over'
 
-- Around line 158:
+- Around line 157:
 
     You forgot a '=back' before '=head1'
