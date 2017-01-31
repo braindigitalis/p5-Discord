@@ -30,12 +30,7 @@ method get_req ($url, $content) {
     	$url = "${url}?" . $self->_build_params($content);
     }
 
-    my $h = HTTP::Headers->new(
-        "Authorization" => "Bot " . $self->token,
-        "User-Agent"    => 'p5-Discord',
-    );
-
-    my $req = HTTP::Request->new(GET => $url, $h);
+    my $req = HTTP::Request->new(GET => $url, $self->_headers);
     my $res = $self->ua->request($req);
     return decode_json($res->content);
 }
@@ -44,6 +39,15 @@ method post_req ($url, $content) {
     $url = $self->url . $url;
 
     my $res = $self->ua->post($url, $self->_build_post_headers, Content => $content);
+}
+
+method _headers {
+    my $h = HTTP::Headers->new(
+        "Authorization" => "Bot " . $self->token,
+        "User-Agent"    => 'p5-Discord',
+    );
+
+    return $h;
 }
 
 method _build_params ($args) {
