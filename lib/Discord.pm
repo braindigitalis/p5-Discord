@@ -122,7 +122,6 @@ Version 0.001
       });
 
       $disc->on(message => func ($message) {
-          say "Message";
           say $message->author->username . ": " . $message->content;
 
           if ($message->mentioned) {
